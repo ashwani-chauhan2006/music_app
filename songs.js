@@ -88,7 +88,7 @@ const songs = [
         title: "Mann Mera",
         artist: "Gajendra Verma",
         cover: "https://i.scdn.co/image/ab67616d0000b273c6f7af36bcd24c20c2d3a3e9",
-        file: "Mann Mera (PenduJatt.Com.Se).mp3"
+        file: "songs/Mann Mera (PenduJatt.Com.Se).mp3"
     }
 ];
 
