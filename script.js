@@ -39,8 +39,7 @@ searchResults.className = 'search-results';
 
 // Initialize the player
 function initPlayer() {
-    loadSong(currentSongIndex);
-    renderPlaylists();
+    displayHome();
     updatePlayerUI();
     
     // Add error handling for audio
@@ -428,6 +427,7 @@ document.querySelectorAll('.navigation a').forEach(link => {
         
         switch(action) {
             case 'home':
+                displayHome();
                 clearSearch();
                 break;
             case 'search':
@@ -561,6 +561,92 @@ function displayAllSongs() {
             if (!isPlaying) togglePlay();
         });
         allSongsList.appendChild(songElement);
+    });
+}
+
+// Function to display home content
+function displayHome() {
+    const mainContent = document.querySelector('.main-content');
+    mainContent.innerHTML = `
+        <div class="topbar">
+            <div class="prev-next-buttons">
+                <button type="button" class="fa fa-chevron-left"></button>
+                <button type="button" class="fa fa-chevron-right"></button>
+            </div>
+            <div class="navbar">
+                <ul>
+                    <li><a href="#">Premium</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Download</a></li>
+                    <li class="divider">|</li>
+                    <li><a href="#">Sign Up</a></li>
+                </ul>
+                <button type="button">Log In</button>
+            </div>
+        </div>
+        <div class="spotify-playlists">
+            <h2>Bollywood Hits</h2>
+            <div class="list" id="bollywood-hits"></div>
+        </div>
+        <div class="spotify-playlists">
+            <h2>Romantic Hits</h2>
+            <div class="list" id="romantic-hits"></div>
+        </div>
+    `;
+
+    // Add search input back
+    document.querySelector('.navbar').insertBefore(searchInput, document.querySelector('.navbar button'));
+
+    // Display Bollywood Hits
+    const bollywoodHitsList = document.getElementById('bollywood-hits');
+    const bollywoodSongs = songs.filter(song => song.id >= 13 && song.id <= 40);
+    bollywoodSongs.slice(0, 6).forEach(song => {
+        const songElement = document.createElement('div');
+        songElement.className = 'item';
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}">
+            <div class="play">
+                <i class="fa fa-play"></i>
+            </div>
+            <h4>${song.title}</h4>
+            <p>${song.artist}</p>
+        `;
+        songElement.addEventListener('click', () => {
+            currentSongIndex = songs.findIndex(s => s.id === song.id);
+            loadSong(currentSongIndex);
+            if (!isPlaying) togglePlay();
+        });
+        bollywoodHitsList.appendChild(songElement);
+    });
+
+    // Display Romantic Hits
+    const romanticHitsList = document.getElementById('romantic-hits');
+    const romanticSongs = [
+        songs.find(s => s.id === 26), // Chahun Main Ya Naa
+        songs.find(s => s.id === 28), // Sunn Raha Hai
+        songs.find(s => s.id === 21), // Bhula Dena
+        songs.find(s => s.id === 22), // Kabhi Jo Baadal Barse
+        songs.find(s => s.id === 29), // Tu Hai Ki Nahi
+        songs.find(s => s.id === 38)  // Bewajah
+    ].filter(Boolean);
+
+    romanticSongs.forEach(song => {
+        const songElement = document.createElement('div');
+        songElement.className = 'item';
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}">
+            <div class="play">
+                <i class="fa fa-play"></i>
+            </div>
+            <h4>${song.title}</h4>
+            <p>${song.artist}</p>
+        `;
+        songElement.addEventListener('click', () => {
+            currentSongIndex = songs.findIndex(s => s.id === song.id);
+            loadSong(currentSongIndex);
+            if (!isPlaying) togglePlay();
+        });
+        romanticHitsList.appendChild(songElement);
     });
 }
 
