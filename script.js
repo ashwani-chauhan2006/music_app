@@ -259,86 +259,96 @@ function performSearch(query) {
     });
 
     // Show search results
-    searchResults.style.display = 'block';
-    searchResults.innerHTML = '';
+    const searchResults = document.querySelector('.search-results');
+    if (searchResults) {
+        searchResults.style.display = 'block';
+        searchResults.innerHTML = '';
 
-    if (results.songs.length === 0 && results.playlists.length === 0) {
-        searchResults.innerHTML = '<p class="no-results">No results found</p>';
-        return;
-    }
+        if (results.songs.length === 0 && results.playlists.length === 0) {
+            searchResults.innerHTML = '<p class="no-results">No results found</p>';
+            return;
+        }
 
-    // Display songs
-    if (results.songs.length > 0) {
-        const songsSection = document.createElement('div');
-        songsSection.className = 'search-section';
-        songsSection.innerHTML = '<h2>Songs</h2>';
-        
-        const songsList = document.createElement('div');
-        songsList.className = 'list';
-        
-        results.songs.forEach(song => {
-            const songElement = document.createElement('div');
-            songElement.className = 'item';
-            songElement.innerHTML = `
-                <img src="${song.cover}" alt="${song.title}">
-                <div class="play">
-                    <i class="fa fa-play"></i>
-                </div>
-                <h4>${song.title}</h4>
-                <p>${song.artist}</p>
-            `;
-            songElement.addEventListener('click', () => {
-                currentSongIndex = songs.findIndex(s => s.id === song.id);
-                loadSong(currentSongIndex);
-                if (!isPlaying) togglePlay();
-            });
-            songsList.appendChild(songElement);
-        });
-        
-        songsSection.appendChild(songsList);
-        searchResults.appendChild(songsSection);
-    }
-
-    // Display playlists
-    if (results.playlists.length > 0) {
-        const playlistsSection = document.createElement('div');
-        playlistsSection.className = 'search-section';
-        playlistsSection.innerHTML = '<h2>Playlists</h2>';
-        
-        const playlistsList = document.createElement('div');
-        playlistsList.className = 'list';
-        
-        results.playlists.forEach(playlist => {
-            const playlistElement = document.createElement('div');
-            playlistElement.className = 'item';
-            playlistElement.innerHTML = `
-                <img src="${playlist.cover}" alt="${playlist.name}">
-                <div class="play">
-                    <i class="fa fa-play"></i>
-                </div>
-                <h4>${playlist.name}</h4>
-                <p>Playlist</p>
-            `;
-            playlistElement.addEventListener('click', () => {
-                // Play first song in playlist
-                if (playlist.songs.length > 0) {
-                    currentSongIndex = songs.findIndex(s => s.id === playlist.songs[0]);
+        // Display songs
+        if (results.songs.length > 0) {
+            const songsSection = document.createElement('div');
+            songsSection.className = 'search-section';
+            songsSection.innerHTML = '<h2>Songs</h2>';
+            
+            const songsList = document.createElement('div');
+            songsList.className = 'list';
+            
+            results.songs.forEach(song => {
+                const songElement = document.createElement('div');
+                songElement.className = 'item';
+                songElement.innerHTML = `
+                    <img src="${song.cover}" alt="${song.title}">
+                    <div class="play">
+                        <i class="fa fa-play"></i>
+                    </div>
+                    <h4>${song.title}</h4>
+                    <p>${song.artist}</p>
+                `;
+                songElement.addEventListener('click', () => {
+                    currentSongIndex = songs.findIndex(s => s.id === song.id);
                     loadSong(currentSongIndex);
                     if (!isPlaying) togglePlay();
-                }
+                });
+                songsList.appendChild(songElement);
             });
-            playlistsList.appendChild(playlistElement);
-        });
-        
-        playlistsSection.appendChild(playlistsList);
-        searchResults.appendChild(playlistsSection);
+            
+            songsSection.appendChild(songsList);
+            searchResults.appendChild(songsSection);
+        }
+
+        // Display playlists
+        if (results.playlists.length > 0) {
+            const playlistsSection = document.createElement('div');
+            playlistsSection.className = 'search-section';
+            playlistsSection.innerHTML = '<h2>Playlists</h2>';
+            
+            const playlistsList = document.createElement('div');
+            playlistsList.className = 'list';
+            
+            results.playlists.forEach(playlist => {
+                const playlistElement = document.createElement('div');
+                playlistElement.className = 'item';
+                playlistElement.innerHTML = `
+                    <img src="${playlist.cover}" alt="${playlist.name}">
+                    <div class="play">
+                        <i class="fa fa-play"></i>
+                    </div>
+                    <h4>${playlist.name}</h4>
+                    <p>Playlist</p>
+                `;
+                playlistElement.addEventListener('click', () => {
+                    // Play first song in playlist
+                    if (playlist.songs.length > 0) {
+                        currentSongIndex = songs.findIndex(s => s.id === playlist.songs[0]);
+                        loadSong(currentSongIndex);
+                        if (!isPlaying) togglePlay();
+                    }
+                });
+                playlistsList.appendChild(playlistElement);
+            });
+            
+            playlistsSection.appendChild(playlistsList);
+            searchResults.appendChild(playlistsSection);
+        }
     }
 }
 
 // Clear search and show playlists
 function clearSearch() {
-    searchInput.value = '';
-    searchResults.style.display = 'none';
+    const searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    const searchResults = document.querySelector('.search-results');
+    if (searchResults) {
+        searchResults.style.display = 'none';
+        searchResults.innerHTML = '';
+    }
     document.querySelectorAll('.spotify-playlists').forEach(playlist => {
         playlist.style.display = 'block';
     });
@@ -353,6 +363,22 @@ searchInput.addEventListener('input', (e) => {
     }
 });
 
+// Add Enter key event listener
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = e.target.value.trim();
+        if (query) {
+            performSearch(query);
+            // Show search results
+            const searchResults = document.querySelector('.search-results');
+            if (searchResults) {
+                searchResults.style.display = 'block';
+            }
+        }
+    }
+});
+
 // Navigation functionality
 document.querySelectorAll('.navigation a').forEach(link => {
     link.addEventListener('click', (e) => {
@@ -364,7 +390,62 @@ document.querySelectorAll('.navigation a').forEach(link => {
                 clearSearch();
                 break;
             case 'search':
-                searchInput.focus();
+                // Clear existing content and show search interface
+                const mainContent = document.querySelector('.main-content');
+                mainContent.innerHTML = `
+                    <div class="topbar">
+                        <div class="prev-next-buttons">
+                            <button type="button" class="fa fa-chevron-left"></button>
+                            <button type="button" class="fa fa-chevron-right"></button>
+                        </div>
+                        <div class="navbar">
+                            <ul>
+                                <li><a href="#">Premium</a></li>
+                                <li><a href="#">Support</a></li>
+                                <li><a href="#">Download</a></li>
+                                <li class="divider">|</li>
+                                <li><a href="#">Sign Up</a></li>
+                            </ul>
+                            <button type="button">Log In</button>
+                        </div>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-header">
+                            <h2>Search</h2>
+                            <input type="text" class="search-input" placeholder="Search for songs, artists, or playlists">
+                        </div>
+                        <div class="search-results"></div>
+                    </div>
+                `;
+                
+                // Add event listener to the new search input
+                const newSearchInput = document.querySelector('.search-input');
+                newSearchInput.addEventListener('input', (e) => {
+                    if (e.target.value.trim() === '') {
+                        clearSearch();
+                    } else {
+                        performSearch(e.target.value);
+                    }
+                });
+
+                // Add Enter key event listener
+                newSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const query = e.target.value.trim();
+                        if (query) {
+                            performSearch(query);
+                            // Show search results
+                            const searchResults = document.querySelector('.search-results');
+                            if (searchResults) {
+                                searchResults.style.display = 'block';
+                            }
+                        }
+                    }
+                });
+                
+                // Focus the search input
+                newSearchInput.focus();
                 break;
             case 'your library':
                 // Show user's library (you can implement this later)
@@ -378,6 +459,9 @@ document.querySelectorAll('.navigation a').forEach(link => {
                 // Show liked songs (you can implement this later)
                 alert('Liked songs feature coming soon!');
                 break;
+            case 'all songs':
+                displayAllSongs();
+                break;
         }
 
         // Close mobile menu if open
@@ -386,6 +470,58 @@ document.querySelectorAll('.navigation a').forEach(link => {
         }
     });
 });
+
+// Function to display all songs
+function displayAllSongs() {
+    // Clear existing content
+    const mainContent = document.querySelector('.main-content');
+    mainContent.innerHTML = `
+        <div class="topbar">
+            <div class="prev-next-buttons">
+                <button type="button" class="fa fa-chevron-left"></button>
+                <button type="button" class="fa fa-chevron-right"></button>
+            </div>
+            <div class="navbar">
+                <ul>
+                    <li><a href="#">Premium</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Download</a></li>
+                    <li class="divider">|</li>
+                    <li><a href="#">Sign Up</a></li>
+                </ul>
+                <button type="button">Log In</button>
+            </div>
+        </div>
+        <div class="spotify-playlists">
+            <h2>All Songs</h2>
+            <div class="list" id="all-songs-list"></div>
+        </div>
+    `;
+
+    // Add search input back
+    document.querySelector('.navbar').insertBefore(searchInput, document.querySelector('.navbar button'));
+
+    // Display all songs
+    const allSongsList = document.getElementById('all-songs-list');
+    songs.forEach(song => {
+        const songElement = document.createElement('div');
+        songElement.className = 'item';
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}">
+            <div class="play">
+                <i class="fa fa-play"></i>
+            </div>
+            <h4>${song.title}</h4>
+            <p>${song.artist}</p>
+        `;
+        songElement.addEventListener('click', () => {
+            currentSongIndex = songs.findIndex(s => s.id === song.id);
+            loadSong(currentSongIndex);
+            if (!isPlaying) togglePlay();
+        });
+        allSongsList.appendChild(songElement);
+    });
+}
 
 // Add styles for search
 const style = document.createElement('style');
@@ -426,17 +562,41 @@ style.textContent = `
         padding: 20px;
     }
 
+    .search-container {
+        padding: 20px;
+    }
+
+    .search-header {
+        margin-bottom: 30px;
+    }
+
+    .search-header h2 {
+        color: #fff;
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+
+    .search-header .search-input {
+        width: 100%;
+        max-width: 500px;
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+
     @media screen and (max-width: 768px) {
-        .search-input {
-            width: 150px;
+        .search-header .search-input {
+            max-width: 100%;
         }
     }
 
     @media screen and (max-width: 480px) {
-        .search-input {
-            width: 120px;
-            padding: 6px 12px;
-            font-size: 12px;
+        .search-header h2 {
+            font-size: 24px;
+        }
+        
+        .search-header .search-input {
+            font-size: 14px;
+            padding: 10px 15px;
         }
     }
 `;

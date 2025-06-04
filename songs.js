@@ -28,18 +28,11 @@ const songs = [
         file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
     },
     {
-        id: 5,
+        id: 6,
         title: "Don't Start Now",
         artist: "Dua Lipa",
         cover: "https://i.scdn.co/image/ab67616d0000b273c6f7af36bcd24c20c2d3a3e9",
         file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
-    },
-    {
-        id: 6,
-        title: "Watermelon Sugar",
-        artist: "Harry Styles",
-        cover: "https://i.scdn.co/image/ab67616d0000b273c6f7af36bcd24c20c2d3a3e9",
-        file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
     },
     {
         id: 7,
