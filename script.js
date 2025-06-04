@@ -42,6 +42,13 @@ function initPlayer() {
     loadSong(currentSongIndex);
     renderPlaylists();
     updatePlayerUI();
+    
+    // Add error handling for audio
+    audio.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        isPlaying = false;
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    });
 }
 
 // Load a song
@@ -51,6 +58,13 @@ function loadSong(index) {
     currentSongImg.src = song.cover;
     currentSongTitle.textContent = song.title;
     currentSongArtist.textContent = song.artist;
+    
+    // Reset play state
+    isPlaying = false;
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    
+    // Load the audio
+    audio.load();
 }
 
 // Play/Pause
@@ -59,7 +73,9 @@ function togglePlay() {
         audio.pause();
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     } else {
-        audio.play();
+        audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+        });
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
     }
     isPlaying = !isPlaying;
@@ -72,7 +88,11 @@ function prevSong() {
         currentSongIndex = songs.length - 1;
     }
     loadSong(currentSongIndex);
-    if (isPlaying) audio.play();
+    if (isPlaying) {
+        audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+        });
+    }
 }
 
 // Next Song
@@ -82,7 +102,11 @@ function nextSong() {
         currentSongIndex = 0;
     }
     loadSong(currentSongIndex);
-    if (isPlaying) audio.play();
+    if (isPlaying) {
+        audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+        });
+    }
 }
 
 // Update Progress Bar
@@ -182,19 +206,27 @@ function updatePlayerUI() {
 }
 
 // Event Listeners
-playPauseBtn.addEventListener('click', togglePlay);
-prevBtn.addEventListener('click', prevSong);
-nextBtn.addEventListener('click', nextSong);
-shuffleBtn.addEventListener('click', toggleShuffle);
-repeatBtn.addEventListener('click', toggleRepeat);
-volumeBtn.addEventListener('click', toggleMute);
-audio.addEventListener('timeupdate', updateProgress);
-progressBar.addEventListener('click', setProgress);
-volumeSlider.addEventListener('click', setVolume);
+playPauseBtn.addEventListener('click', () => {
+    togglePlay();
+});
+
+// Add audio event listeners
+audio.addEventListener('play', () => {
+    isPlaying = true;
+    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+});
+
+audio.addEventListener('pause', () => {
+    isPlaying = false;
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+});
+
 audio.addEventListener('ended', () => {
     if (repeatMode === 'one') {
         audio.currentTime = 0;
-        audio.play();
+        audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+        });
     } else if (repeatMode === 'all') {
         nextSong();
     } else {
@@ -206,6 +238,15 @@ audio.addEventListener('ended', () => {
         }
     }
 });
+
+prevBtn.addEventListener('click', prevSong);
+nextBtn.addEventListener('click', nextSong);
+shuffleBtn.addEventListener('click', toggleShuffle);
+repeatBtn.addEventListener('click', toggleRepeat);
+volumeBtn.addEventListener('click', toggleMute);
+audio.addEventListener('timeupdate', updateProgress);
+progressBar.addEventListener('click', setProgress);
+volumeSlider.addEventListener('click', setVolume);
 
 // Initialize the player when the page loads
 window.addEventListener('load', initPlayer);
