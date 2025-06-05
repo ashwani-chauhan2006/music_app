@@ -24,7 +24,7 @@ const songs = [
         id: 4,
         title: "Saaiyaan",
         artist: "Kailash Kher",
-        cover: "imges/kailash kher.jpg",
+        cover: "imges/gunday.jpg",
         file: "songs/Saaiyaan - Gunday - Gunday 2014 128KBPS.mp3"
     },
     {

@@ -4,11 +4,8 @@ const prevBtn = document.querySelector('.previous');
 const nextBtn = document.querySelector('.next');
 const shuffleBtn = document.querySelector('.shuffle');
 const repeatBtn = document.querySelector('.repeat');
-const volumeBtn = document.querySelector('.volume');
 const progressBar = document.querySelector('.progress');
 const progressFilled = document.querySelector('.progress-filled');
-const volumeSlider = document.querySelector('.volume-slider');
-const volumeFilled = document.querySelector('.volume-filled');
 const currentTimeEl = document.querySelector('.current-time');
 const totalTimeEl = document.querySelector('.total-time');
 const currentSongImg = document.getElementById('current-song-img');
@@ -33,9 +30,11 @@ const searchInput = document.createElement('input');
 searchInput.type = 'text';
 searchInput.placeholder = 'Search for songs, artists, or playlists';
 searchInput.className = 'search-input';
+searchInput.style.display = 'none'; // Hide search input initially
 
 const searchResults = document.createElement('div');
 searchResults.className = 'search-results';
+searchResults.style.display = 'none'; // Hide search results initially
 
 // Initialize the player
 function initPlayer() {
@@ -87,11 +86,9 @@ function prevSong() {
         currentSongIndex = songs.length - 1;
     }
     loadSong(currentSongIndex);
-    if (isPlaying) {
-        audio.play().catch(error => {
-            console.error('Error playing audio:', error);
-        });
-    }
+    audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+    });
 }
 
 // Next Song
@@ -101,11 +98,9 @@ function nextSong() {
         currentSongIndex = 0;
     }
     loadSong(currentSongIndex);
-    if (isPlaying) {
-        audio.play().catch(error => {
-            console.error('Error playing audio:', error);
-        });
-    }
+    audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+    });
 }
 
 // Update Progress Bar
@@ -158,28 +153,6 @@ function toggleRepeat() {
     }
 }
 
-// Set Volume
-function setVolume(e) {
-    const width = this.clientWidth;
-    const clickX = e.offsetX;
-    const volume = clickX / width;
-    audio.volume = volume;
-    volumeFilled.style.width = `${volume * 100}%`;
-}
-
-// Toggle Mute
-function toggleMute() {
-    if (audio.volume > 0) {
-        audio.volume = 0;
-        volumeFilled.style.width = '0%';
-        volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-    } else {
-        audio.volume = 1;
-        volumeFilled.style.width = '100%';
-        volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-    }
-}
-
 // Render Playlists
 function renderPlaylists() {
     playlists.forEach(playlist => {
@@ -199,9 +172,8 @@ function renderPlaylists() {
 
 // Update Player UI
 function updatePlayerUI() {
-    // Set initial volume
-    audio.volume = 0.5;
-    volumeFilled.style.width = '50%';
+    // Set initial volume to 1 (100%)
+    audio.volume = 1;
 }
 
 // Event Listeners
@@ -226,15 +198,8 @@ audio.addEventListener('ended', () => {
         audio.play().catch(error => {
             console.error('Error playing audio:', error);
         });
-    } else if (repeatMode === 'all') {
-        nextSong();
     } else {
-        if (currentSongIndex < songs.length - 1) {
-            nextSong();
-        } else {
-            isPlaying = false;
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        }
+        nextSong();
     }
 });
 
@@ -242,10 +207,8 @@ prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
 shuffleBtn.addEventListener('click', toggleShuffle);
 repeatBtn.addEventListener('click', toggleRepeat);
-volumeBtn.addEventListener('click', toggleMute);
 audio.addEventListener('timeupdate', updateProgress);
 progressBar.addEventListener('click', setProgress);
-volumeSlider.addEventListener('click', setVolume);
 
 // Initialize the player when the page loads
 window.addEventListener('load', initPlayer);
@@ -459,8 +422,11 @@ document.querySelectorAll('.navigation a').forEach(link => {
                     </div>
                 `;
                 
-                // Add event listener to the new search input
+                // Show search input
                 const newSearchInput = document.querySelector('.search-input');
+                newSearchInput.style.display = 'block';
+                
+                // Add event listener to the new search input
                 newSearchInput.addEventListener('input', (e) => {
                     if (e.target.value.trim() === '') {
                         clearSearch();
@@ -593,9 +559,6 @@ function displayHome() {
             <div class="list" id="romantic-hits"></div>
         </div>
     `;
-
-    // Add search input back
-    document.querySelector('.navbar').insertBefore(searchInput, document.querySelector('.navbar button'));
 
     // Display Bollywood Hits
     const bollywoodHitsList = document.getElementById('bollywood-hits');
