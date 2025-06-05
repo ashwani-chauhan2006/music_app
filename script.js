@@ -489,8 +489,6 @@ document.querySelectorAll('.navigation a').forEach(link => {
 });
 
 function displayAllSongs() {
-}
-function displayLibrary() {
     const mainContent = document.querySelector('.main-content');
     mainContent.innerHTML = `
         <div class="topbar">
@@ -510,32 +508,30 @@ function displayLibrary() {
             </div>
         </div>
         <div class="spotify-playlists">
-            <h2>Your Playlists</h2>
-            <div class="list" id="library-playlists-list"></div>
+            <h2>All Songs</h2>
+            <div class="list" id="all-songs-list"></div>
         </div>
     `;
 
-    const libraryList = document.getElementById('library-playlists-list');
-    if (playlists.length === 0) {
-        libraryList.innerHTML = '<p style="color:#b3b3b3;text-align:center;">No playlists yet.</p>';
-    } else {
-        playlists.forEach((playlist, idx) => {
-            const playlistElement = document.createElement('div');
-            playlistElement.className = 'item';
-            playlistElement.innerHTML = `
-                <img src="${playlist.cover}" alt="${playlist.name}">
-                <div class="play">
-                    <i class="fa fa-play"></i>
-                </div>
-                <h4>${playlist.name}</h4>
-                <p>Playlist</p>
-            `;
-            playlistElement.addEventListener('click', () => {
-                showPlaylistDetail(idx);
-            });
-            libraryList.appendChild(playlistElement);
+    const allSongsList = document.getElementById('all-songs-list');
+    songs.forEach(song => {
+        const songElement = document.createElement('div');
+        songElement.className = 'item';
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}">
+            <div class="play">
+                <i class="fa fa-play"></i>
+            </div>
+            <h4>${song.title}</h4>
+            <p>${song.artist}</p>
+        `;
+        songElement.addEventListener('click', () => {
+            currentSongIndex = songs.findIndex(s => s.id === song.id);
+            loadSong(currentSongIndex);
+            if (!isPlaying) togglePlay();
         });
-    }
+        allSongsList.appendChild(songElement);
+    });
 }
 
 // Show playlist detail and add song button
