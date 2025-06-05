@@ -488,6 +488,7 @@ document.querySelectorAll('.navigation a').forEach(link => {
     });
 });
 
+
 function displayAllSongs() {
     const mainContent = document.querySelector('.main-content');
     mainContent.innerHTML = `
