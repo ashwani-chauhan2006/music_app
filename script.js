@@ -394,7 +394,20 @@ document.querySelectorAll('.navigation a').forEach(link => {
                 clearSearch();
                 break;
             case 'search':
-                // Clear existing content and show search interface
+                break;
+            case 'your library':
+                displayLibrary();
+                clearSearch();
+                break;
+            case 'create playlist':
+                createPlaylist(); // <-- Place it here
+                break;
+            case 'liked songs':
+                alert('Liked songs feature coming soon!');
+                break;
+            case 'all songs':
+                displayAllSongs();
+                break;            
                 const mainContent = document.querySelector('.main-content');
                 mainContent.innerHTML = `
                     <div class="topbar">
@@ -455,15 +468,12 @@ document.querySelectorAll('.navigation a').forEach(link => {
                 newSearchInput.focus();
                 break;
             case 'your library':
-                // Show user's library (you can implement this later)
                 alert('Library feature coming soon!');
                 break;
             case 'create playlist':
-                // Create new playlist (you can implement this later)
                 alert('Create playlist feature coming soon!');
                 break;
             case 'liked songs':
-                // Show liked songs (you can implement this later)
                 alert('Liked songs feature coming soon!');
                 break;
             case 'all songs':
@@ -478,9 +488,9 @@ document.querySelectorAll('.navigation a').forEach(link => {
     });
 });
 
-// Function to display all songs
 function displayAllSongs() {
-    // Clear existing content
+}
+function displayLibrary() {
     const mainContent = document.querySelector('.main-content');
     mainContent.innerHTML = `
         <div class="topbar">
@@ -500,10 +510,128 @@ function displayAllSongs() {
             </div>
         </div>
         <div class="spotify-playlists">
-            <h2>All Songs</h2>
-            <div class="list" id="all-songs-list"></div>
+            <h2>Your Playlists</h2>
+            <div class="list" id="library-playlists-list"></div>
         </div>
     `;
+
+    const libraryList = document.getElementById('library-playlists-list');
+    if (playlists.length === 0) {
+        libraryList.innerHTML = '<p style="color:#b3b3b3;text-align:center;">No playlists yet.</p>';
+    } else {
+        playlists.forEach((playlist, idx) => {
+            const playlistElement = document.createElement('div');
+            playlistElement.className = 'item';
+            playlistElement.innerHTML = `
+                <img src="${playlist.cover}" alt="${playlist.name}">
+                <div class="play">
+                    <i class="fa fa-play"></i>
+                </div>
+                <h4>${playlist.name}</h4>
+                <p>Playlist</p>
+            `;
+            playlistElement.addEventListener('click', () => {
+                showPlaylistDetail(idx);
+            });
+            libraryList.appendChild(playlistElement);
+        });
+    }
+}
+
+// Show playlist detail and add song button
+function showPlaylistDetail(playlistIndex) {
+    const playlist = playlists[playlistIndex];
+    const mainContent = document.querySelector('.main-content');
+    mainContent.innerHTML = `
+        <div class="playlist-detail">
+            <h2>${playlist.name}</h2>
+            <p>Total Songs: ${playlist.songs.length}</p>
+            <button id="add-song-btn">Add Song</button>
+            <div id="playlist-songs-list" style="margin-top:20px; display: flex; flex-wrap: wrap; gap: 20px;">
+    ${
+        playlist.songs.length === 0
+            ? '<p style="color:#b3b3b3;">No songs in this playlist.</p>'
+            : playlist.songs.map(songId => {
+                const song = songs.find(s => s.id === songId);
+                return song
+                    ? `
+                        <div class="item" style="width:180px;">
+                            <img src="${song.cover}" alt="${song.title}">
+                            <div class="play">
+                                <i class="fa fa-play"></i>
+                            </div>
+                            <h4>${song.title}</h4>
+                            <p>${song.artist}</p>
+                        </div>
+                    `
+                    : '';
+            }).join('')
+    }
+       </div>
+            <button id="back-to-library" style="margin-top:20px;">Back to Library</button>
+        </div>
+    `;
+
+    // Add event for "Add Song" button
+    document.getElementById('add-song-btn').onclick = function() {
+        // Simple prompt to add by song title (you can enhance this)
+        const songTitle = prompt('Enter song title to add:');
+        if (songTitle) {
+            const song = songs.find(s => s.title.toLowerCase() === songTitle.toLowerCase());
+            if (song && !playlist.songs.includes(song.id)) {
+                playlist.songs.push(song.id);
+                showPlaylistDetail(playlistIndex); // Refresh detail view
+            } else {
+                alert('Song not found or already in playlist.');
+            }
+        }
+    };
+
+    // Back to library button
+    document.getElementById('back-to-library').onclick = function() {
+        displayLibrary();
+    };
+
+    // Add play functionality to each song card in the playlist
+    document.querySelectorAll('#playlist-songs-list .item').forEach(item => {
+        item.addEventListener('click', function() {
+            const title = this.querySelector('h4').textContent;
+            const song = songs.find(s => s.title === title);
+            if (song) {
+                currentSongIndex = songs.findIndex(s => s.id === song.id);
+                loadSong(currentSongIndex);
+                if (!isPlaying) togglePlay();
+            }
+        });
+    });
+}
+
+    const libraryList = document.getElementById('library-playlists-list');
+    if (playlists.length === 0) {
+        libraryList.innerHTML = '<p style="color:#b3b3b3;text-align:center;">No playlists yet.</p>';
+    } else {
+        playlists.forEach(playlist => {
+            const playlistElement = document.createElement('div');
+            playlistElement.className = 'item';
+            playlistElement.innerHTML = `
+                <img src="${playlist.cover}" alt="${playlist.name}">
+                <div class="play">
+                    <i class="fa fa-play"></i>
+                </div>
+                <h4>${playlist.name}</h4>
+                <p>Playlist</p>
+            `;
+            playlistElement.addEventListener('click', () => {
+                // Play first song in playlist if available
+                if (playlist.songs.length > 0) {
+                    currentSongIndex = songs.findIndex(s => s.id === playlist.songs[0]);
+                    loadSong(currentSongIndex);
+                    if (!isPlaying) togglePlay();
+                }
+            });
+            libraryList.appendChild(playlistElement);
+        });
+    }
 
     // Add search input back
     document.querySelector('.navbar').insertBefore(searchInput, document.querySelector('.navbar button'));
@@ -528,7 +656,6 @@ function displayAllSongs() {
         });
         allSongsList.appendChild(songElement);
     });
-}
 
 // Function to display home content
 function displayHome() {
@@ -691,3 +818,18 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style); 
+function createPlaylist() {
+    const playlistName = prompt('Enter playlist name:');
+    if (playlistName && playlistName.trim() !== '') {
+       
+        const newPlaylist = {
+            name: playlistName.trim(),
+            cover: 'default-cover.jpg', 
+            songs: [],
+        };
+        playlists.push(newPlaylist);
+        renderPlaylists();     
+        displayLibrary();       
+        alert(`Playlist "${playlistName}" created!`);
+    }
+}
