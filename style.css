@@ -1,99 +1,79 @@
-/* Remove navbar and related styles */
-.navbar,
-.navbar ul,
-.navbar button,
-.navbar .divider,
-.navbar li,
-.navbar a {
-    display: none;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Search styles */
-.search-input {
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: none;
-    background: #242424;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
     color: #fff;
-    width: 200px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    grid-template-rows: 1fr 90px;
+    height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background: #000;
+    padding: 24px;
+    grid-row: 1 / 2;
+}
+
+.logo img {
+    width: 130px;
+    margin-bottom: 30px;
+}
+
+.navigation ul {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.navigation ul li {
+    padding: 10px 0;
+}
+
+.navigation ul li a {
+    color: #b3b3b3;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s ease;
+}
+
+.navigation ul li a:hover {
+    color: #fff;
+}
+
+.navigation ul li a i {
+    font-size: 20px;
     margin-right: 10px;
 }
 
-.search-input:focus {
-    outline: none;
-    background: #2a2a2a;
+/* Main Content Styles */
+.main-content {
+    background: linear-gradient(to bottom, #1e1e1e, #121212);
+    padding: 0 20px 20px 20px;
+    overflow-y: auto;
+    padding-bottom: 100px;
 }
 
-.search-results {
-    padding: 20px;
-}
-
-.search-section {
-    margin-bottom: 30px;
-}
-
-.search-section h2 {
-    color: #fff;
-    font-size: 22px;
-    margin-bottom: 20px;
-}
-
-.no-results {
-    color: #b3b3b3;
-    text-align: center;
-    padding: 20px;
-}
-
-.search-container {
-    padding: 20px;
-}
-
-.search-header {
-    margin-bottom: 30px;
-}
-
-.search-header h2 {
-    color: #fff;
-    font-size: 32px;
-    margin-bottom: 20px;
-}
-
-.search-header .search-input {
-    width: 100%;
-    max-width: 500px;
-    font-size: 16px;
-    padding: 12px 20px;
-}
-
-@media screen and (max-width: 768px) {
-    .search-header .search-input {
-        max-width: 100%;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .search-header h2 {
-        font-size: 24px;
-    }
-    
-    .search-header .search-input {
-        font-size: 14px;
-        padding: 10px 15px;
-    }
-}
-
-/* Update topbar styles */
 .topbar {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    padding: 14px 30px;
-    background: #101010;
-}
-
-.prev-next-buttons {
-    display: flex;
-    gap: 10px;
+    padding: 14px 0;
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 1;
 }
 
 .prev-next-buttons button {
@@ -103,421 +83,401 @@
     height: 34px;
     border-radius: 100%;
     font-size: 18px;
-    border: 0px;
-    background-color: #090909;
-    transition: all 0.3s ease;
+    border: 0;
+    background: #090909;
+    margin-right: 10px;
 }
 
-.prev-next-buttons button:hover {
+.navbar {
+    display: flex;
+    align-items: center;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+}
+
+.navbar ul li {
+    padding: 0 20px;
+}
+
+.navbar ul li a:hover {
     color: #fff;
-    background-color: #282828;
+}
+
+.navbar button {
+    background: #fff;
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 14px 30px;
+    border: 0;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+/* Playlist Styles */
+.spotify-playlists {
+    padding: 20px 0;
+}
+
+.spotify-playlists h2 {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.list .item {
+    background: #181818;
+    padding: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all ease 0.4s;
+}
+
+.list .item:hover {
+    background: #252525;
+}
+
+.list .item img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.list .item .play .fa {
+    position: absolute;
+    right: 10px;
+    top: -60px;
+    padding: 18px;
+    background: #1db954;
+    border-radius: 100%;
+    opacity: 0;
+    transition: all ease 0.4s;
+}
+
+.list .item:hover .play .fa {
+    opacity: 1;
+    transform: translateY(-20px);
+}
+
+.list .item h4 {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.list .item p {
+    color: #989898;
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 600;
+}
+
+/* Player Styles */
+.player {
+    background: #181818;
+    border-top: 1px solid #282828;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    grid-column: 1 / -1;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.song-info {
+    display: flex;
+    align-items: center;
+    width: 30%;
+}
+
+.song-info img {
+    width: 56px;
+    height: 56px;
+    margin-right: 14px;
+}
+
+.song-details h4 {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.song-details p {
+    color: #b3b3b3;
+    font-size: 12px;
+}
+
+.player-controls {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.control-buttons {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.control-buttons button {
+    background: transparent;
+    border: none;
+    color: #b3b3b3;
+    font-size: 16px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.control-buttons .play-pause {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress, .volume-slider {
+    flex: 1;
+    height: 4px;
+    background: #4f4f4f;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+.progress-filled, .volume-filled {
+    background: #b3b3b3;
+    height: 100%;
+    border-radius: 2px;
+}
+
+.progress-filled {
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+.volume-filled {
+    width: 100%;
+}
+
+.current-time, .total-time {
+    color: #b3b3b3;
+    font-size: 12px;
+}
+
+.volume-controls {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.volume-controls button {
+    background: transparent;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+}
+/* Mobile Menu */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 101;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+.menu-overlay.active {
+    display: block;
 }
 
 /* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .container {
+        grid-template-columns: 200px 1fr;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
     }
 
     .sidebar {
+        display: none;
         position: fixed;
-        left: -100%;
+        left: 0;
         top: 0;
         bottom: 0;
-        width: 100%;
-        z-index: 1000;
-        transition: left 0.3s ease;
+        width: 200px;
+        z-index: 100;
         background: #000;
     }
 
     .sidebar.active {
-        left: 0;
+        display: block;
     }
 
     .main-content {
         margin-left: 0;
-        padding: 20px;
     }
 
-    .topbar {
-        padding: 10px 20px;
-    }
-
-    .spotify-playlists {
-        padding: 20px;
-    }
-
-    .list {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 15px;
-    }
-
-    .item {
-        padding: 10px;
-    }
-
-    .item img {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1;
-        object-fit: cover;
-    }
-
-    .item h4 {
-        font-size: 14px;
-        margin: 8px 0 4px 0;
-    }
-
-    .item p {
-        font-size: 12px;
-    }
-
-    .play {
-        width: 30px;
-        height: 30px;
-        right: 10px;
-        bottom: 60px;
-    }
-
-    .play i {
-        font-size: 12px;
-    }
-
-    .player {
-        padding: 10px;
-    }
-
-    .player-controls {
-        gap: 10px;
-    }
-
-    .control-button {
-        width: 30px;
-        height: 30px;
-    }
-
-    .control-button i {
-        font-size: 14px;
-    }
-
-    .progress-bar {
-        height: 4px;
-    }
-
-    .progress {
-        height: 4px;
-    }
-
-    .song-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .song-info h4 {
-        font-size: 14px;
-    }
-
-    .song-info p {
-        font-size: 12px;
-    }
-
-    .volume-controls {
+    .navbar ul {
         display: none;
     }
 
-    .mobile-menu-toggle {
+    .navbar button {
+        margin-left: 10px;
+        padding: 10px 20px;
+    }
+
+    .list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .mobile-menu-btn {
         display: block;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1001;
-        background: #1db954;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
     }
 
-    .search-container {
-        padding: 10px;
-    }
-
-    .search-header {
-        margin-bottom: 15px;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .search-results {
-        padding: 10px;
-    }
-
-    .search-section h2 {
-        font-size: 18px;
-        margin: 15px 0;
-    }
-
-    /* Styles for song list view */
-    .song-list-view .list {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        padding: 0;
-    }
-
-    .song-list-view .item {
-        display: flex;
-        align-items: center;
-        padding: 10px 0;
-        background: none;
-        border-radius: 0;
-        transition: background-color 0.2s ease;
-    }
-
-    .song-list-view .item:hover {
-        background-color: #282828;
-    }
-
-    .song-list-view .item img {
-        width: 40px;
-        height: 40px;
-        margin-right: 15px;
-        border-radius: 4px;
-    }
-
-    .song-list-view .item .play {
-        display: none; /* Hide play button in list view items */
-    }
-
-    .song-list-view .item h4 {
-        font-size: 16px;
-        margin: 0;
-        color: #fff;
-        flex-grow: 1;
-    }
-
-    .song-list-view .item p {
-        font-size: 14px;
-        margin: 0;
-        color: #b3b3b3;
-    }
-
-    /* Add dots for options */
-    .song-list-view .item::after {
-        content: '\2022\2022\2022'; /* Three dots */
-        color: #b3b3b3;
-        font-size: 20px;
-        margin-left: 15px;
-        cursor: pointer;
+    .sidebar.active ~ .player {
+        transform: translateY(100%);
     }
 }
 
-/* Additional responsive styles for very small screens */
 @media screen and (max-width: 480px) {
+    .topbar {
+        padding: 10px 0;
+    }
+
+    .navbar button {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
     .list {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 10px;
+        gap: 15px;
     }
 
-    .item {
-        padding: 8px;
+    .list .item {
+        padding: 10px;
     }
 
-    .item h4 {
+    .list .item h4 {
         font-size: 12px;
     }
 
-    .item p {
-        font-size: 10px;
-    }
-
-    .play {
-        width: 25px;
-        height: 25px;
-        right: 8px;
-        bottom: 50px;
-    }
-
-    .play i {
+    .list .item p {
         font-size: 10px;
     }
 
     .player {
-        padding: 8px;
-    }
-
-    .control-button {
-        width: 25px;
-        height: 25px;
-    }
-
-    .control-button i {
-        font-size: 12px;
-    }
-
-    .song-list-view .item img {
-        width: 35px;
-        height: 35px;
-        margin-right: 10px;
-    }
-
-    .song-list-view .item h4 {
-        font-size: 14px;
-    }
-
-    .song-list-view .item p {
-        font-size: 12px;
-    }
-
-    .song-list-view .item::after {
-        font-size: 16px;
-        margin-left: 10px;
-    }
-}
-
-/* Optimize image loading */
-.item img {
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-/* Improve touch targets for mobile */
-.control-button,
-.play,
-.item {
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* Add smooth scrolling for mobile */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Optimize text for mobile reading */
-@media screen and (max-width: 768px) {
-    body {
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        line-height: 1.2;
-    }
-}
-
-/* Improve search results layout for mobile */
-@media screen and (max-width: 768px) {
-    .search-results .list {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    }
-
-    .search-results .item {
-        margin-bottom: 15px;
-    }
-}
-
-/* Optimize player controls for mobile */
-@media screen and (max-width: 768px) {
-    .player-controls {
-        justify-content: space-between;
-        padding: 0 10px;
-    }
-
-    .progress-container {
-        margin: 0 10px;
+        padding: 10px;
+        height: auto;
+        min-height: 80px;
+        background: rgba(24, 24, 24, 0.95);
+        backdrop-filter: blur(10px);
     }
 
     .song-info {
-        max-width: 60%;
-    }
-}
-
-/* Add pull-to-refresh visual feedback */
-@media screen and (max-width: 768px) {
-    .main-content {
-        overscroll-behavior-y: contain;
-    }
-}
-
-/* Optimize navigation for mobile */
-@media screen and (max-width: 768px) {
-    .navigation {
-        padding: 10px;
-    }
-
-    .navigation a {
-        padding: 8px;
-        font-size: 14px;
-    }
-
-    .navigation i {
-        font-size: 16px;
-    }
-}
-
-/* Improve library view for mobile */
-@media screen and (max-width: 768px) {
-    .library-playlists-list {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 15px;
-        padding: 15px;
-    }
-
-    .playlist-card {
-        padding: 10px;
-    }
-
-    .playlist-card img {
         width: 100%;
-        height: auto;
-        aspect-ratio: 1;
-        object-fit: cover;
-    }
-}
-
-/* Add loading state for images */
-.item img {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.item img.loaded {
-    opacity: 1;
-}
-
-/* Optimize animations for mobile */
-@media screen and (max-width: 768px) {
-    .item:hover {
-        transform: none;
+        justify-content: flex-start;
+        margin-bottom: 5px;
     }
 
-    .play {
-        opacity: 1;
-        transform: none;
-    }
-}
-
-/* Improve accessibility for mobile */
-@media screen and (max-width: 768px) {
-    button, 
-    .control-button,
-    .play {
-        min-height: 44px;
-        min-width: 44px;
+    .player-controls {
+        width: 100%;
+        order: 2;
     }
 
-    input[type="text"] {
-        font-size: 16px; /* Prevents zoom on iOS */
+    .volume-controls {
+        width: 100%;
+        justify-content: center;
+        order: 3;
+        margin-top: 5px;
+    }
+
+    .control-buttons {
+        width: 100%;
+        justify-content: center;
+        margin: 5px 0;
+    }
+
+    .control-buttons button {
+        font-size: 14px;
+        margin: 0 5px;
+    }
+
+    .control-buttons .play-pause {
+        width: 28px;
+        height: 28px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .current-time, .total-time {
+        font-size: 10px;
+    }
+
+    .volume-slider {
+        width: 80px;
+    }
+
+    .main-content {
+        padding-bottom: 120px;
+    }
+
+    .signup-btn, .login-btn {
+        padding: 6px 12px;
+        font-size: 14px;
     }
 } 
