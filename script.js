@@ -828,20 +828,136 @@ style.textContent = `
         padding: 12px 20px;
     }
 
+    /* Mobile Responsive Styles */
     @media screen and (max-width: 768px) {
+        .spotify-playlists .list {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+            gap: 15px !important;
+            padding: 15px !important;
+        }
+
+        .item {
+            padding: 12px !important;
+        }
+
+        .item h4 {
+            font-size: 14px !important;
+        }
+
+        .item p {
+            font-size: 12px !important;
+        }
+
+        .play {
+            width: 35px !important;
+            height: 35px !important;
+            right: 15px !important;
+            bottom: 65px !important;
+        }
+
         .search-header .search-input {
             max-width: 100%;
+            font-size: 14px;
+            padding: 10px 15px;
+        }
+
+        .search-header h2 {
+            font-size: 24px;
+        }
+
+        .search-section h2 {
+            font-size: 20px;
+        }
+
+        .topbar {
+            padding: 10px 15px;
+        }
+
+        .prev-next-buttons button {
+            padding: 8px;
+            font-size: 14px;
         }
     }
 
     @media screen and (max-width: 480px) {
-        .search-header h2 {
-            font-size: 24px;
+        .spotify-playlists .list {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+            gap: 10px !important;
+            padding: 10px !important;
         }
-        
+
+        .item {
+            padding: 10px !important;
+        }
+
+        .item h4 {
+            font-size: 13px !important;
+            margin-bottom: 5px !important;
+        }
+
+        .item p {
+            font-size: 11px !important;
+        }
+
+        .play {
+            width: 30px !important;
+            height: 30px !important;
+            right: 10px !important;
+            bottom: 55px !important;
+        }
+
+        .search-header h2 {
+            font-size: 20px;
+        }
+
         .search-header .search-input {
-            font-size: 14px;
-            padding: 10px 15px;
+            font-size: 13px;
+            padding: 8px 12px;
+        }
+
+        .search-section h2 {
+            font-size: 18px;
+        }
+
+        .topbar {
+            padding: 8px 12px;
+        }
+
+        .prev-next-buttons button {
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .spotify-playlists h2 {
+            font-size: 18px;
+            padding: 0 10px;
+        }
+    }
+
+    /* Additional Mobile Optimizations */
+    @media screen and (max-width: 768px) {
+        .main-content {
+            padding-bottom: 80px; /* Space for player controls */
+        }
+
+        .player-controls {
+            padding: 10px;
+        }
+
+        .progress {
+            margin: 0 10px;
+        }
+
+        .current-time, .total-time {
+            font-size: 12px;
+        }
+
+        .player-controls button {
+            padding: 8px;
+        }
+
+        .player-controls button i {
+            font-size: 16px;
         }
     }
 `;
