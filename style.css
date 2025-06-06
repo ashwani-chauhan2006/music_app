@@ -1,0 +1,114 @@
+/* Remove navbar and related styles */
+.navbar,
+.navbar ul,
+.navbar button,
+.navbar .divider,
+.navbar li,
+.navbar a {
+    display: none;
+}
+
+/* Search styles */
+.search-input {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: none;
+    background: #242424;
+    color: #fff;
+    width: 200px;
+    margin-right: 10px;
+}
+
+.search-input:focus {
+    outline: none;
+    background: #2a2a2a;
+}
+
+.search-results {
+    padding: 20px;
+}
+
+.search-section {
+    margin-bottom: 30px;
+}
+
+.search-section h2 {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.no-results {
+    color: #b3b3b3;
+    text-align: center;
+    padding: 20px;
+}
+
+.search-container {
+    padding: 20px;
+}
+
+.search-header {
+    margin-bottom: 30px;
+}
+
+.search-header h2 {
+    color: #fff;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.search-header .search-input {
+    width: 100%;
+    max-width: 500px;
+    font-size: 16px;
+    padding: 12px 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .search-header .search-input {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .search-header h2 {
+        font-size: 24px;
+    }
+    
+    .search-header .search-input {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}
+
+/* Update topbar styles */
+.topbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 14px 30px;
+    background: #101010;
+}
+
+.prev-next-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.prev-next-buttons button {
+    color: #7a7a7a;
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: 100%;
+    font-size: 18px;
+    border: 0px;
+    background-color: #090909;
+    transition: all 0.3s ease;
+}
+
+.prev-next-buttons button:hover {
+    color: #fff;
+    background-color: #282828;
+} 

@@ -100,15 +100,6 @@ body {
 
 .navbar ul li {
     padding: 0 20px;
-    position: relative;
-}
-
-.navbar ul li a {
-    color: #b3b3b3;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 14px;
-    letter-spacing: 1px;
 }
 
 .navbar ul li a:hover {
@@ -127,6 +118,7 @@ body {
     margin-left: 20px;
 }
 
+/* Playlist Styles */
 .spotify-playlists {
     padding: 20px 0;
 }
@@ -159,10 +151,6 @@ body {
     width: 100%;
     border-radius: 6px;
     margin-bottom: 10px;
-}
-
-.list .item .play {
-    position: relative;
 }
 
 .list .item .play .fa {
@@ -211,6 +199,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
+    transition: transform 0.3s ease;
 }
 
 .song-info {
@@ -276,7 +265,7 @@ body {
     gap: 10px;
 }
 
-.progress {
+.progress, .volume-slider {
     flex: 1;
     height: 4px;
     background: #4f4f4f;
@@ -285,12 +274,19 @@ body {
     position: relative;
 }
 
-.progress-filled {
+.progress-filled, .volume-filled {
     background: #b3b3b3;
-    width: 0%;
     height: 100%;
     border-radius: 2px;
+}
+
+.progress-filled {
+    width: 0%;
     transition: width 0.1s linear;
+}
+
+.volume-filled {
+    width: 100%;
 }
 
 .current-time, .total-time {
@@ -312,21 +308,34 @@ body {
     color: #b3b3b3;
     cursor: pointer;
 }
-
-.volume-slider {
-    width: 100px;
-    height: 4px;
-    background: #4f4f4f;
-    border-radius: 2px;
+/* Mobile Menu */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
     cursor: pointer;
-    position: relative;
+    padding: 5px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 101;
 }
 
-.volume-filled {
-    background: #b3b3b3;
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+.menu-overlay.active {
+    display: block;
 }
 
 /* Responsive Design */
@@ -373,31 +382,18 @@ body {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
-    .topbar {
-        padding: 20px 0;
-        position: relative;
+    .mobile-menu-btn {
+        display: block;
     }
 
-    .navbar {
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .prev-next-buttons {
-        display: none;
+    .sidebar.active ~ .player {
+        transform: translateY(100%);
     }
 }
 
 @media screen and (max-width: 480px) {
     .topbar {
         padding: 10px 0;
-    }
-
-    .prev-next-buttons button {
-        width: 30px;
-        height: 30px;
     }
 
     .navbar button {
@@ -422,7 +418,6 @@ body {
         font-size: 10px;
     }
 
-    /* Player adjustments for mobile */
     .player {
         padding: 10px;
         height: auto;
@@ -478,57 +473,12 @@ body {
         width: 80px;
     }
 
-    /* Adjust main content padding for mobile */
     .main-content {
         padding-bottom: 120px;
     }
-}
 
-/* Add mobile menu button */
-.mobile-menu-btn {
-    display: none;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px;
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    z-index: 101;
-}
-
-@media screen and (max-width: 768px) {
-    .mobile-menu-btn {
-        display: block;
-    }
-}
-
-/* Add overlay for mobile menu */
-.menu-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 99;
-}
-
-.menu-overlay.active {
-    display: block;
-}
-
-/* Add smooth transition for player */
-.player {
-    transition: transform 0.3s ease;
-}
-
-/* Hide player when menu is open on mobile */
-@media screen and (max-width: 768px) {
-    .sidebar.active ~ .player {
-        transform: translateY(100%);
+    .signup-btn, .login-btn {
+        padding: 6px 12px;
+        font-size: 14px;
     }
 } 

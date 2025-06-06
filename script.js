@@ -30,11 +30,11 @@ const searchInput = document.createElement('input');
 searchInput.type = 'text';
 searchInput.placeholder = 'Search for songs, artists, or playlists';
 searchInput.className = 'search-input';
-searchInput.style.display = 'none'; // Hide search input initially
+searchInput.style.display = 'none';
 
 const searchResults = document.createElement('div');
 searchResults.className = 'search-results';
-searchResults.style.display = 'none'; // Hide search results initially
+searchResults.style.display = 'none';
 
 // Initialize the player
 function initPlayer() {
@@ -47,6 +47,33 @@ function initPlayer() {
         isPlaying = false;
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     });
+
+    // Add event listener for Home link
+    const homeLink = document.querySelector('.navigation a[href="#"]');
+    if (homeLink) {
+        homeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            displayHome();
+        });
+    }
+
+    // Add event listener for All Songs link
+    const allSongsLink = document.getElementById('all-songs-link');
+    if (allSongsLink) {
+        allSongsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            displayAllSongs();
+        });
+    }
+
+    // Add event listener for Search link
+    const searchLink = document.querySelector('.navigation a[href="#"] i.fa-search').parentElement;
+    if (searchLink) {
+        searchLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            displaySearch();
+        });
+    }
 }
 
 // Load a song
@@ -256,11 +283,6 @@ function performSearch(query) {
         )
     };
 
-    // Hide all playlists
-    document.querySelectorAll('.spotify-playlists').forEach(playlist => {
-        playlist.style.display = 'none';
-    });
-
     // Show search results
     const searchResults = document.querySelector('.search-results');
     if (searchResults) {
@@ -280,18 +302,38 @@ function performSearch(query) {
             
             const songsList = document.createElement('div');
             songsList.className = 'list';
+            songsList.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;';
             
             results.songs.forEach(song => {
                 const songElement = document.createElement('div');
                 songElement.className = 'item';
-                songElement.innerHTML = `
-                    <img src="${song.cover}" alt="${song.title}">
-                    <div class="play">
-                        <i class="fa fa-play"></i>
-                    </div>
-                    <h4>${song.title}</h4>
-                    <p>${song.artist}</p>
+                songElement.style.cssText = `
+                    background: #181818;
+                    padding: 16px;
+                    border-radius: 8px;
+                    transition: background-color 0.3s ease;
+                    cursor: pointer;
+                    position: relative;
                 `;
+                songElement.innerHTML = `
+                    <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
+                    <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+                        <i class="fa fa-play" style="color: black;"></i>
+                    </div>
+                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
+                    <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
+                `;
+                
+                songElement.addEventListener('mouseenter', () => {
+                    songElement.style.backgroundColor = '#282828';
+                    songElement.querySelector('.play').style.opacity = '1';
+                });
+                
+                songElement.addEventListener('mouseleave', () => {
+                    songElement.style.backgroundColor = '#181818';
+                    songElement.querySelector('.play').style.opacity = '0';
+                });
+
                 songElement.addEventListener('click', () => {
                     currentSongIndex = songs.findIndex(s => s.id === song.id);
                     loadSong(currentSongIndex);
@@ -312,20 +354,39 @@ function performSearch(query) {
             
             const playlistsList = document.createElement('div');
             playlistsList.className = 'list';
+            playlistsList.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;';
             
             results.playlists.forEach(playlist => {
                 const playlistElement = document.createElement('div');
                 playlistElement.className = 'item';
-                playlistElement.innerHTML = `
-                    <img src="${playlist.cover}" alt="${playlist.name}">
-                    <div class="play">
-                        <i class="fa fa-play"></i>
-                    </div>
-                    <h4>${playlist.name}</h4>
-                    <p>Playlist</p>
+                playlistElement.style.cssText = `
+                    background: #181818;
+                    padding: 16px;
+                    border-radius: 8px;
+                    transition: background-color 0.3s ease;
+                    cursor: pointer;
+                    position: relative;
                 `;
+                playlistElement.innerHTML = `
+                    <img src="${playlist.cover}" alt="${playlist.name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
+                    <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+                        <i class="fa fa-play" style="color: black;"></i>
+                    </div>
+                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${playlist.name}</h4>
+                    <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${playlist.songs ? playlist.songs.length : 0} songs</p>
+                `;
+                
+                playlistElement.addEventListener('mouseenter', () => {
+                    playlistElement.style.backgroundColor = '#282828';
+                    playlistElement.querySelector('.play').style.opacity = '1';
+                });
+                
+                playlistElement.addEventListener('mouseleave', () => {
+                    playlistElement.style.backgroundColor = '#181818';
+                    playlistElement.querySelector('.play').style.opacity = '0';
+                });
+
                 playlistElement.addEventListener('click', () => {
-                    // Play first song in playlist
                     if (playlist.songs.length > 0) {
                         currentSongIndex = songs.findIndex(s => s.id === playlist.songs[0]);
                         loadSong(currentSongIndex);
@@ -366,14 +427,12 @@ searchInput.addEventListener('input', (e) => {
     }
 });
 
-// Add Enter key event listener
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
         const query = e.target.value.trim();
         if (query) {
             performSearch(query);
-            // Show search results
             const searchResults = document.querySelector('.search-results');
             if (searchResults) {
                 searchResults.style.display = 'block';
@@ -391,87 +450,15 @@ document.querySelectorAll('.navigation a').forEach(link => {
         switch(action) {
             case 'home':
                 displayHome();
-                clearSearch();
                 break;
             case 'search':
+                displaySearch();
                 break;
             case 'your library':
                 displayLibrary();
-                clearSearch();
                 break;
             case 'create playlist':
-                createPlaylist(); // <-- Place it here
-                break;
-            case 'liked songs':
-                alert('Liked songs feature coming soon!');
-                break;
-            case 'all songs':
-                displayAllSongs();
-                break;            
-                const mainContent = document.querySelector('.main-content');
-                mainContent.innerHTML = `
-                    <div class="topbar">
-                        <div class="prev-next-buttons">
-                            <button type="button" class="fa fa-chevron-left"></button>
-                            <button type="button" class="fa fa-chevron-right"></button>
-                        </div>
-                        <div class="navbar">
-                            <ul>
-                                <li><a href="#">Premium</a></li>
-                                <li><a href="#">Support</a></li>
-                                <li><a href="#">Download</a></li>
-                                <li class="divider">|</li>
-                                <li><a href="#">Sign Up</a></li>
-                            </ul>
-                            <button type="button">Log In</button>
-                        </div>
-                    </div>
-                    <div class="search-container">
-                        <div class="search-header">
-                            <h2>Search</h2>
-                            <input type="text" class="search-input" placeholder="Search for songs, artists, or playlists">
-                        </div>
-                        <div class="search-results"></div>
-                    </div>
-                `;
-                
-                // Show search input
-                const newSearchInput = document.querySelector('.search-input');
-                newSearchInput.style.display = 'block';
-                
-                // Add event listener to the new search input
-                newSearchInput.addEventListener('input', (e) => {
-                    if (e.target.value.trim() === '') {
-                        clearSearch();
-                    } else {
-                        performSearch(e.target.value);
-                    }
-                });
-
-                // Add Enter key event listener
-                newSearchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const query = e.target.value.trim();
-                        if (query) {
-                            performSearch(query);
-                            // Show search results
-                            const searchResults = document.querySelector('.search-results');
-                            if (searchResults) {
-                                searchResults.style.display = 'block';
-                            }
-                        }
-                    }
-                });
-                
-                // Focus the search input
-                newSearchInput.focus();
-                break;
-            case 'your library':
-                alert('Library feature coming soon!');
-                break;
-            case 'create playlist':
-                alert('Create playlist feature coming soon!');
+                createPlaylist();
                 break;
             case 'liked songs':
                 alert('Liked songs feature coming soon!');
@@ -488,7 +475,6 @@ document.querySelectorAll('.navigation a').forEach(link => {
     });
 });
 
-
 function displayAllSongs() {
     const mainContent = document.querySelector('.main-content');
     mainContent.innerHTML = `
@@ -497,20 +483,10 @@ function displayAllSongs() {
                 <button type="button" class="fa fa-chevron-left"></button>
                 <button type="button" class="fa fa-chevron-right"></button>
             </div>
-            <div class="navbar">
-                <ul>
-                    <li><a href="#">Premium</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">Download</a></li>
-                    <li class="divider">|</li>
-                    <li><a href="#">Sign Up</a></li>
-                </ul>
-                <button type="button">Log In</button>
-            </div>
         </div>
         <div class="spotify-playlists">
             <h2>All Songs</h2>
-            <div class="list" id="all-songs-list"></div>
+            <div class="list" id="all-songs-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
         </div>
     `;
 
@@ -518,19 +494,39 @@ function displayAllSongs() {
     songs.forEach(song => {
         const songElement = document.createElement('div');
         songElement.className = 'item';
-        songElement.innerHTML = `
-            <img src="${song.cover}" alt="${song.title}">
-            <div class="play">
-                <i class="fa fa-play"></i>
-            </div>
-            <h4>${song.title}</h4>
-            <p>${song.artist}</p>
+        songElement.style.cssText = `
+            background: #181818;
+            padding: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            position: relative;
         `;
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
+            <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+                <i class="fa fa-play" style="color: black;"></i>
+            </div>
+            <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
+            <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
+        `;
+        
+        songElement.addEventListener('mouseenter', () => {
+            songElement.style.backgroundColor = '#282828';
+            songElement.querySelector('.play').style.opacity = '1';
+        });
+        
+        songElement.addEventListener('mouseleave', () => {
+            songElement.style.backgroundColor = '#181818';
+            songElement.querySelector('.play').style.opacity = '0';
+        });
+
         songElement.addEventListener('click', () => {
             currentSongIndex = songs.findIndex(s => s.id === song.id);
             loadSong(currentSongIndex);
             if (!isPlaying) togglePlay();
         });
+        
         allSongsList.appendChild(songElement);
     });
 }
@@ -603,56 +599,64 @@ function showPlaylistDetail(playlistIndex) {
     });
 }
 
+function displayLibrary() {
+    console.log('Displaying library with playlists:', playlists);
+    const mainContent = document.querySelector('.main-content');
+    mainContent.innerHTML = `
+        <div class="topbar">
+            <div class="prev-next-buttons">
+                <button type="button" class="fa fa-chevron-left"></button>
+                <button type="button" class="fa fa-chevron-right"></button>
+            </div>
+        </div>
+        <div class="spotify-playlists">
+            <h2>Your Playlists</h2>
+            <div class="list" id="library-playlists-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
+        </div>
+    `;
+
     const libraryList = document.getElementById('library-playlists-list');
     if (playlists.length === 0) {
-        libraryList.innerHTML = '<p style="color:#b3b3b3;text-align:center;">No playlists yet.</p>';
+        libraryList.innerHTML = '<p style="color:#b3b3b3;text-align:center;grid-column:1/-1;">No playlists yet. Create one to get started!</p>';
     } else {
-        playlists.forEach(playlist => {
+        playlists.forEach((playlist, index) => {
             const playlistElement = document.createElement('div');
             playlistElement.className = 'item';
-            playlistElement.innerHTML = `
-                <img src="${playlist.cover}" alt="${playlist.name}">
-                <div class="play">
-                    <i class="fa fa-play"></i>
-                </div>
-                <h4>${playlist.name}</h4>
-                <p>Playlist</p>
+            playlistElement.style.cssText = `
+                background: #181818;
+                padding: 16px;
+                border-radius: 8px;
+                transition: background-color 0.3s ease;
+                cursor: pointer;
+                position: relative;
             `;
-            playlistElement.addEventListener('click', () => {
-                // Play first song in playlist if available
-                if (playlist.songs.length > 0) {
-                    currentSongIndex = songs.findIndex(s => s.id === playlist.songs[0]);
-                    loadSong(currentSongIndex);
-                    if (!isPlaying) togglePlay();
-                }
+            playlistElement.innerHTML = `
+                <img src="${playlist.cover}" alt="${playlist.name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
+                <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+                    <i class="fa fa-play" style="color: black;"></i>
+                </div>
+                <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${playlist.name}</h4>
+                <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${playlist.songs ? playlist.songs.length : 0} songs</p>
+            `;
+            
+            playlistElement.addEventListener('mouseenter', () => {
+                playlistElement.style.backgroundColor = '#282828';
+                playlistElement.querySelector('.play').style.opacity = '1';
             });
+            
+            playlistElement.addEventListener('mouseleave', () => {
+                playlistElement.style.backgroundColor = '#181818';
+                playlistElement.querySelector('.play').style.opacity = '0';
+            });
+
+            playlistElement.addEventListener('click', () => {
+                showPlaylistDetail(index);
+            });
+            
             libraryList.appendChild(playlistElement);
         });
     }
-
-    // Add search input back
-    document.querySelector('.navbar').insertBefore(searchInput, document.querySelector('.navbar button'));
-
-    // Display all songs
-    const allSongsList = document.getElementById('all-songs-list');
-    songs.forEach(song => {
-        const songElement = document.createElement('div');
-        songElement.className = 'item';
-        songElement.innerHTML = `
-            <img src="${song.cover}" alt="${song.title}">
-            <div class="play">
-                <i class="fa fa-play"></i>
-            </div>
-            <h4>${song.title}</h4>
-            <p>${song.artist}</p>
-        `;
-        songElement.addEventListener('click', () => {
-            currentSongIndex = songs.findIndex(s => s.id === song.id);
-            loadSong(currentSongIndex);
-            if (!isPlaying) togglePlay();
-        });
-        allSongsList.appendChild(songElement);
-    });
+}
 
 // Function to display home content
 function displayHome() {
@@ -663,24 +667,14 @@ function displayHome() {
                 <button type="button" class="fa fa-chevron-left"></button>
                 <button type="button" class="fa fa-chevron-right"></button>
             </div>
-            <div class="navbar">
-                <ul>
-                    <li><a href="#">Premium</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">Download</a></li>
-                    <li class="divider">|</li>
-                    <li><a href="#">Sign Up</a></li>
-                </ul>
-                <button type="button">Log In</button>
-            </div>
         </div>
         <div class="spotify-playlists">
             <h2>Bollywood Hits</h2>
-            <div class="list" id="bollywood-hits"></div>
+            <div class="list" id="bollywood-hits" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
         </div>
         <div class="spotify-playlists">
             <h2>Romantic Hits</h2>
-            <div class="list" id="romantic-hits"></div>
+            <div class="list" id="romantic-hits" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
         </div>
     `;
 
@@ -690,14 +684,33 @@ function displayHome() {
     bollywoodSongs.slice(0, 6).forEach(song => {
         const songElement = document.createElement('div');
         songElement.className = 'item';
-        songElement.innerHTML = `
-            <img src="${song.cover}" alt="${song.title}">
-            <div class="play">
-                <i class="fa fa-play"></i>
-            </div>
-            <h4>${song.title}</h4>
-            <p>${song.artist}</p>
+        songElement.style.cssText = `
+            background: #181818;
+            padding: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            position: relative;
         `;
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
+            <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+                <i class="fa fa-play" style="color: black;"></i>
+            </div>
+            <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
+            <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
+        `;
+        
+        songElement.addEventListener('mouseenter', () => {
+            songElement.style.backgroundColor = '#282828';
+            songElement.querySelector('.play').style.opacity = '1';
+        });
+        
+        songElement.addEventListener('mouseleave', () => {
+            songElement.style.backgroundColor = '#181818';
+            songElement.querySelector('.play').style.opacity = '0';
+        });
+
         songElement.addEventListener('click', () => {
             currentSongIndex = songs.findIndex(s => s.id === song.id);
             loadSong(currentSongIndex);
@@ -720,14 +733,33 @@ function displayHome() {
     romanticSongs.forEach(song => {
         const songElement = document.createElement('div');
         songElement.className = 'item';
-        songElement.innerHTML = `
-            <img src="${song.cover}" alt="${song.title}">
-            <div class="play">
-                <i class="fa fa-play"></i>
-            </div>
-            <h4>${song.title}</h4>
-            <p>${song.artist}</p>
+        songElement.style.cssText = `
+            background: #181818;
+            padding: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            position: relative;
         `;
+        songElement.innerHTML = `
+            <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
+            <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+                <i class="fa fa-play" style="color: black;"></i>
+            </div>
+            <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
+            <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
+        `;
+        
+        songElement.addEventListener('mouseenter', () => {
+            songElement.style.backgroundColor = '#282828';
+            songElement.querySelector('.play').style.opacity = '1';
+        });
+        
+        songElement.addEventListener('mouseleave', () => {
+            songElement.style.backgroundColor = '#181818';
+            songElement.querySelector('.play').style.opacity = '0';
+        });
+
         songElement.addEventListener('click', () => {
             currentSongIndex = songs.findIndex(s => s.id === song.id);
             loadSong(currentSongIndex);
@@ -756,7 +788,6 @@ style.textContent = `
     }
 
     .search-results {
-        display: none;
         padding: 20px;
     }
 
@@ -814,7 +845,8 @@ style.textContent = `
         }
     }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);
+
 function createPlaylist() {
     const playlistName = prompt('Enter playlist name:');
     if (playlistName && playlistName.trim() !== '') {
@@ -829,4 +861,55 @@ function createPlaylist() {
         displayLibrary();       
         alert(`Playlist "${playlistName}" created!`);
     }
+}
+
+// Add search display function
+function displaySearch() {
+    const mainContent = document.querySelector('.main-content');
+    mainContent.innerHTML = `
+        <div class="topbar">
+            <div class="prev-next-buttons">
+                <button type="button" class="fa fa-chevron-left"></button>
+                <button type="button" class="fa fa-chevron-right"></button>
+            </div>
+        </div>
+        <div class="search-container">
+            <div class="search-header">
+                <h2>Search</h2>
+                <input type="text" class="search-input" placeholder="Search for songs, artists, or playlists">
+            </div>
+            <div class="search-results"></div>
+        </div>
+    `;
+    
+    // Show search input
+    const searchInput = document.querySelector('.search-input');
+    searchInput.style.display = 'block';
+    
+    // Add event listener to the search input
+    searchInput.addEventListener('input', (e) => {
+        if (e.target.value.trim() === '') {
+            clearSearch();
+        } else {
+            performSearch(e.target.value);
+        }
+    });
+
+    // Add Enter key event listener
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = e.target.value.trim();
+            if (query) {
+                performSearch(query);
+                const searchResults = document.querySelector('.search-results');
+                if (searchResults) {
+                    searchResults.style.display = 'block';
+                }
+            }
+        }
+    });
+    
+    // Focus the search input
+    searchInput.focus();
 }
