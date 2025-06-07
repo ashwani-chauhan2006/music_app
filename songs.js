@@ -200,7 +200,7 @@ const songs = [
         title: "Sajde",
         artist: "Kishore Kumar",
         cover: "imges/sajde.jpg",
-        file: "songs/sajde.mp3"
+        file: "songs/Sajde – Kill Dil.mp3"
     }
 ];
 
