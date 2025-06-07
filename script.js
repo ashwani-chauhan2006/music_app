@@ -12,6 +12,11 @@ const currentSongImg = document.getElementById('current-song-img');
 const currentSongTitle = document.getElementById('current-song-title');
 const currentSongArtist = document.getElementById('current-song-artist');
 const playlistContainer = document.querySelector('.spotify-playlists .list');
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const sidebar = document.querySelector('.sidebar');
+const menuOverlay = document.querySelector('.menu-overlay');
+const searchInput = document.querySelector('.search-input');
+const searchResults = document.querySelector('.search-results');
 
 // Audio Element
 const audio = new Audio();
@@ -21,20 +26,95 @@ let isShuffled = false;
 let repeatMode = 'none'; // none, one, all
 
 // Mobile Menu Functionality
-const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-const sidebar = document.querySelector('.sidebar');
-const menuOverlay = document.querySelector('.menu-overlay');
+function toggleMobileMenu() {
+    sidebar.classList.toggle('active');
+    menuOverlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+}
 
-// Navigation and Search Functionality
-const searchInput = document.createElement('input');
-searchInput.type = 'text';
-searchInput.placeholder = 'Search for songs, artists, or playlists';
-searchInput.className = 'search-input';
-searchInput.style.display = 'none';
+// Handle search on mobile
+function handleMobileSearch() {
+    if (window.innerWidth <= 480) {
+        searchResults.style.display = 'block';
+        searchInput.focus();
+    }
+}
 
-const searchResults = document.createElement('div');
-searchResults.className = 'search-results';
+// Close search on mobile
+function closeMobileSearch() {
+    if (window.innerWidth <= 480) {
 searchResults.style.display = 'none';
+        searchInput.value = '';
+    }
+}
+
+// Handle touch events for mobile
+function handleMobileTouch() {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const swipeDistance = touchEndX - touchStartX;
+
+        if (Math.abs(swipeDistance) > swipeThreshold) {
+            if (swipeDistance > 0 && touchStartX < 50) {
+                // Swipe right - open menu
+                if (!sidebar.classList.contains('active')) {
+                    toggleMobileMenu();
+                }
+            } else if (swipeDistance < 0 && sidebar.classList.contains('active')) {
+                // Swipe left - close menu
+                toggleMobileMenu();
+            }
+        }
+    }
+}
+
+// Initialize mobile functionality
+function initMobileFeatures() {
+    if (window.innerWidth <= 480) {
+        handleMobileTouch();
+    }
+
+    // Add event listeners
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    menuOverlay.addEventListener('click', toggleMobileMenu);
+
+    // Handle search link click
+    const searchLink = document.querySelector('.navigation a[href="#"] i.fa-search').parentElement;
+    if (searchLink) {
+        searchLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleMobileSearch();
+        });
+    }
+
+    // Close search when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && !searchLink.contains(e.target)) {
+            closeMobileSearch();
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 480) {
+            sidebar.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+}
 
 // Initialize the player
 function initPlayer() {
@@ -186,12 +266,16 @@ function renderPlaylists() {
         const playlistElement = document.createElement('div');
         playlistElement.className = 'item';
         playlistElement.innerHTML = `
+            <div class="image-container">
             <img src="${playlist.cover}" alt="${playlist.name}">
+            </div>
+            <div class="content">
+            <h4>${playlist.name}</h4>
+            <p>Playlist</p>
+            </div>
             <div class="play">
                 <i class="fa fa-play"></i>
             </div>
-            <h4>${playlist.name}</h4>
-            <p>Playlist</p>
         `;
         playlistContainer.appendChild(playlistElement);
     });
@@ -240,206 +324,52 @@ progressBar.addEventListener('click', setProgress);
 // Initialize the player when the page loads
 window.addEventListener('load', initPlayer);
 
-// Mobile Menu Functionality
-function toggleMobileMenu() {
-    sidebar.classList.toggle('active');
-    menuOverlay.classList.toggle('active');
-}
-
-mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-menuOverlay.addEventListener('click', toggleMobileMenu);
-
-// Close mobile menu when clicking a navigation link
-document.querySelectorAll('.navigation a').forEach(link => {
-    link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-            toggleMobileMenu();
-        }
-    });
-});
-
-// Handle window resize
+// Add window resize handler
+let resizeTimeout;
 window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-        sidebar.classList.remove('active');
-        menuOverlay.classList.remove('active');
-    }
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        adjustGridLayout();
+    }, 250);
 });
 
-// Add search elements to the page
-document.querySelector('.navbar').insertBefore(searchInput, document.querySelector('.navbar button'));
-document.querySelector('.main-content').appendChild(searchResults);
+// Function to adjust grid layout based on screen size
+function adjustGridLayout() {
+    const container = document.querySelector('.spotify-playlists .list');
+    if (!container) return;
 
-// Search functionality
-function performSearch(query) {
-    query = query.toLowerCase();
-    const results = {
-        songs: songs.filter(song => 
-            song.title.toLowerCase().includes(query) || 
-            song.artist.toLowerCase().includes(query)
-        ),
-        playlists: playlists.filter(playlist => 
-            playlist.name.toLowerCase().includes(query)
-        )
-    };
-
-    // Show search results
-    const searchResults = document.querySelector('.search-results');
-    if (searchResults) {
-        searchResults.style.display = 'block';
-        searchResults.innerHTML = '';
-
-        if (results.songs.length === 0 && results.playlists.length === 0) {
-            searchResults.innerHTML = '<p class="no-results">No results found</p>';
-            return;
-        }
-
-        // Display songs
-        if (results.songs.length > 0) {
-            const songsSection = document.createElement('div');
-            songsSection.className = 'search-section';
-            songsSection.innerHTML = '<h2>Songs</h2>';
-            
-            const songsList = document.createElement('div');
-            songsList.className = 'list';
-            songsList.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;';
-            
-            results.songs.forEach(song => {
-                const songElement = document.createElement('div');
-                songElement.className = 'item';
-                songElement.style.cssText = `
-                    background: #181818;
-                    padding: 16px;
-                    border-radius: 8px;
-                    transition: background-color 0.3s ease;
-                    cursor: pointer;
-                    position: relative;
-                `;
-                songElement.innerHTML = `
-                    <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
-                    <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
-                        <i class="fa fa-play" style="color: black;"></i>
-                    </div>
-                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
-                    <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
-                `;
-                
-                songElement.addEventListener('mouseenter', () => {
-                    songElement.style.backgroundColor = '#282828';
-                    songElement.querySelector('.play').style.opacity = '1';
-                });
-                
-                songElement.addEventListener('mouseleave', () => {
-                    songElement.style.backgroundColor = '#181818';
-                    songElement.querySelector('.play').style.opacity = '0';
-                });
-
-                songElement.addEventListener('click', () => {
-                    currentSongIndex = songs.findIndex(s => s.id === song.id);
-                    loadSong(currentSongIndex);
-                    if (!isPlaying) togglePlay();
-                });
-                songsList.appendChild(songElement);
-            });
-            
-            songsSection.appendChild(songsList);
-            searchResults.appendChild(songsSection);
-        }
-
-        // Display playlists
-        if (results.playlists.length > 0) {
-            const playlistsSection = document.createElement('div');
-            playlistsSection.className = 'search-section';
-            playlistsSection.innerHTML = '<h2>Playlists</h2>';
-            
-            const playlistsList = document.createElement('div');
-            playlistsList.className = 'list';
-            playlistsList.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;';
-            
-            results.playlists.forEach(playlist => {
-                const playlistElement = document.createElement('div');
-                playlistElement.className = 'item';
-                playlistElement.style.cssText = `
-                    background: #181818;
-                    padding: 16px;
-                    border-radius: 8px;
-                    transition: background-color 0.3s ease;
-                    cursor: pointer;
-                    position: relative;
-                `;
-                playlistElement.innerHTML = `
-                    <img src="${playlist.cover}" alt="${playlist.name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
-                    <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
-                        <i class="fa fa-play" style="color: black;"></i>
-                    </div>
-                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${playlist.name}</h4>
-                    <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${playlist.songs ? playlist.songs.length : 0} songs</p>
-                `;
-                
-                playlistElement.addEventListener('mouseenter', () => {
-                    playlistElement.style.backgroundColor = '#282828';
-                    playlistElement.querySelector('.play').style.opacity = '1';
-                });
-                
-                playlistElement.addEventListener('mouseleave', () => {
-                    playlistElement.style.backgroundColor = '#181818';
-                    playlistElement.querySelector('.play').style.opacity = '0';
-                });
-
-                playlistElement.addEventListener('click', () => {
-                    if (playlist.songs.length > 0) {
-                        currentSongIndex = songs.findIndex(s => s.id === playlist.songs[0]);
-                        loadSong(currentSongIndex);
-                        if (!isPlaying) togglePlay();
-                    }
-                });
-                playlistsList.appendChild(playlistElement);
-            });
-            
-            playlistsSection.appendChild(playlistsList);
-            searchResults.appendChild(playlistsSection);
-        }
-    }
-}
-
-// Clear search and show playlists
-function clearSearch() {
-    const searchInput = document.querySelector('.search-input');
-    if (searchInput) {
-        searchInput.value = '';
-    }
-    const searchResults = document.querySelector('.search-results');
-    if (searchResults) {
-        searchResults.style.display = 'none';
-        searchResults.innerHTML = '';
-    }
-    document.querySelectorAll('.spotify-playlists').forEach(playlist => {
-        playlist.style.display = 'block';
+    const containerWidth = container.offsetWidth;
+    const items = container.querySelectorAll('.item');
+    
+    // Remove any existing inline styles
+    items.forEach(item => {
+        item.style = '';
     });
+
+    // Adjust item sizes based on container width
+    if (containerWidth < 600) {
+        container.style.gridTemplateColumns = '1fr';
+        items.forEach(item => {
+            item.style.display = 'flex';
+            item.style.alignItems = 'center';
+            item.style.height = containerWidth < 360 ? '45px' : 
+                              containerWidth < 480 ? '50px' : '60px';
+            item.style.padding = containerWidth < 360 ? '5px' : 
+                               containerWidth < 480 ? '6px' : '8px';
+        });
+    } else {
+        container.style.gridTemplateColumns = '';
+        items.forEach(item => {
+            item.style.width = containerWidth < 768 ? '140px' :
+                             containerWidth < 1024 ? '150px' :
+                             containerWidth < 1200 ? '160px' : '180px';
+            item.style.margin = '10px';
+        });
+    }
 }
 
-// Search event listeners
-searchInput.addEventListener('input', (e) => {
-    if (e.target.value.trim() === '') {
-        clearSearch();
-    } else {
-        performSearch(e.target.value);
-    }
-});
-
-searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const query = e.target.value.trim();
-        if (query) {
-            performSearch(query);
-            const searchResults = document.querySelector('.search-results');
-            if (searchResults) {
-                searchResults.style.display = 'block';
-            }
-        }
-    }
-});
+// Call adjustGridLayout initially
+adjustGridLayout();
 
 // Navigation functionality
 document.querySelectorAll('.navigation a').forEach(link => {
@@ -670,11 +600,11 @@ function displayHome() {
         </div>
         <div class="spotify-playlists">
             <h2>Bollywood Hits</h2>
-            <div class="list" id="bollywood-hits" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
+            <div class="list" id="bollywood-hits"></div>
         </div>
         <div class="spotify-playlists">
             <h2>Romantic Hits</h2>
-            <div class="list" id="romantic-hits" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
+            <div class="list" id="romantic-hits"></div>
         </div>
     `;
 
@@ -684,25 +614,22 @@ function displayHome() {
     bollywoodSongs.slice(0, 6).forEach(song => {
         const songElement = document.createElement('div');
         songElement.className = 'item';
-        songElement.style.cssText = `
-            background: #181818;
-            padding: 16px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        `;
         songElement.innerHTML = `
-            <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
-            <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
-                <i class="fa fa-play" style="color: black;"></i>
+            <div class="image-container">
+                <img src="${song.cover}" alt="${song.title}">
             </div>
-            <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
-            <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
+            <div class="content">
+                <h4>${song.title}</h4>
+                <p>${song.artist}</p>
+            </div>
+            <div class="play">
+                <i class="fa fa-play"></i>
+            </div>
         `;
         
+        // Add hover effects
         songElement.addEventListener('mouseenter', () => {
-            songElement.style.backgroundColor = '#282828';
+            songElement.style.backgroundColor = '#252525';
             songElement.querySelector('.play').style.opacity = '1';
         });
         
@@ -711,11 +638,13 @@ function displayHome() {
             songElement.querySelector('.play').style.opacity = '0';
         });
 
+        // Add click event
         songElement.addEventListener('click', () => {
             currentSongIndex = songs.findIndex(s => s.id === song.id);
             loadSong(currentSongIndex);
             if (!isPlaying) togglePlay();
         });
+        
         bollywoodHitsList.appendChild(songElement);
     });
 
@@ -733,25 +662,22 @@ function displayHome() {
     romanticSongs.forEach(song => {
         const songElement = document.createElement('div');
         songElement.className = 'item';
-        songElement.style.cssText = `
-            background: #181818;
-            padding: 16px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        `;
         songElement.innerHTML = `
-            <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
-            <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
-                <i class="fa fa-play" style="color: black;"></i>
+            <div class="image-container">
+                <img src="${song.cover}" alt="${song.title}">
             </div>
-            <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${song.title}</h4>
-            <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${song.artist}</p>
+            <div class="content">
+                <h4>${song.title}</h4>
+                <p>${song.artist}</p>
+            </div>
+            <div class="play">
+                <i class="fa fa-play"></i>
+            </div>
         `;
         
+        // Add hover effects
         songElement.addEventListener('mouseenter', () => {
-            songElement.style.backgroundColor = '#282828';
+            songElement.style.backgroundColor = '#252525';
             songElement.querySelector('.play').style.opacity = '1';
         });
         
@@ -760,11 +686,13 @@ function displayHome() {
             songElement.querySelector('.play').style.opacity = '0';
         });
 
+        // Add click event
         songElement.addEventListener('click', () => {
             currentSongIndex = songs.findIndex(s => s.id === song.id);
             loadSong(currentSongIndex);
             if (!isPlaying) togglePlay();
         });
+        
         romanticHitsList.appendChild(songElement);
     });
 }
@@ -1029,3 +957,9 @@ function displaySearch() {
     // Focus the search input
     searchInput.focus();
 }
+
+// Call initMobileFeatures when the page loads
+window.addEventListener('load', () => {
+    initPlayer();
+    initMobileFeatures();
+});
