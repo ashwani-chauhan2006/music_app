@@ -344,8 +344,8 @@ function adjustGridLayout() {
     // Remove any existing inline styles
     items.forEach(item => {
         item.style = '';
-    });
-
+                });
+                
     // Adjust item sizes based on container width
     if (containerWidth < 600) {
         container.style.gridTemplateColumns = '1fr';
@@ -356,7 +356,7 @@ function adjustGridLayout() {
                               containerWidth < 480 ? '50px' : '60px';
             item.style.padding = containerWidth < 360 ? '5px' : 
                                containerWidth < 480 ? '6px' : '8px';
-        });
+    });
     } else {
         container.style.gridTemplateColumns = '';
         items.forEach(item => {
@@ -431,6 +431,7 @@ function displayAllSongs() {
             transition: background-color 0.3s ease;
             cursor: pointer;
             position: relative;
+            ${song.title === "Sajde" ? 'padding-top: 21px;' : ''}
         `;
         songElement.innerHTML = `
             <img src="${song.cover}" alt="${song.title}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
@@ -909,51 +910,58 @@ function createPlaylist() {
 
 // Add search display function
 function displaySearch() {
+    // Clear the main content
     const mainContent = document.querySelector('.main-content');
     mainContent.innerHTML = `
-        <div class="topbar">
-            <div class="prev-next-buttons">
-                <button type="button" class="fa fa-chevron-left"></button>
-                <button type="button" class="fa fa-chevron-right"></button>
-            </div>
-        </div>
         <div class="search-container">
-            <div class="search-header">
-                <h2>Search</h2>
-                <input type="text" class="search-input" placeholder="Search for songs, artists, or playlists">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search for songs, artists...">
             </div>
-            <div class="search-results"></div>
+            <div class="search-results">
+                <h2>Search Results</h2>
+                <div class="list"></div>
+            </div>
         </div>
     `;
-    
-    // Show search input
+
+    // Add event listener for search input
     const searchInput = document.querySelector('.search-input');
-    searchInput.style.display = 'block';
-    
-    // Add event listener to the search input
+    const searchResultsList = document.querySelector('.search-results .list');
+
     searchInput.addEventListener('input', (e) => {
-        if (e.target.value.trim() === '') {
-            clearSearch();
-        } else {
-            performSearch(e.target.value);
-        }
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredSongs = songs.filter(song => 
+            song.title.toLowerCase().includes(searchTerm) || 
+            song.artist.toLowerCase().includes(searchTerm)
+        );
+
+        // Clear previous results
+        searchResultsList.innerHTML = '';
+
+        // Display filtered results
+        filteredSongs.forEach(song => {
+            const songElement = document.createElement('div');
+            songElement.className = 'item';
+            songElement.innerHTML = `
+                <img src="${song.cover}" alt="${song.title}">
+                <h4>${song.title}</h4>
+                <p>${song.artist}</p>
+                <div class="play">
+                    <i class="fa fa-play"></i>
+                </div>
+            `;
+
+            // Add click event to play the song
+            songElement.addEventListener('click', () => {
+                currentSongIndex = songs.findIndex(s => s.id === song.id);
+                loadSong(currentSongIndex);
+                togglePlay();
+            });
+
+            searchResultsList.appendChild(songElement);
+        });
     });
 
-    // Add Enter key event listener
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const query = e.target.value.trim();
-            if (query) {
-                performSearch(query);
-                const searchResults = document.querySelector('.search-results');
-                if (searchResults) {
-                    searchResults.style.display = 'block';
-                }
-            }
-        }
-    });
-    
     // Focus the search input
     searchInput.focus();
 }

@@ -194,6 +194,13 @@ const songs = [
         artist: "KK",
         cover: "imges/bhul bhulaiyaa.jpg",
         file: "songs/Labon Ko - Bhool Bhulaiyaa - Bhool Bhulaiyaa 2007 128KBPS.mp3"
+    },
+    {
+        id: 29,
+        title: "Sajde",
+        artist: "Kishore Kumar",
+        cover: "imges/sajde.jpg",
+        file: "songs/sajde.mp3"
     }
 ];
 
@@ -203,6 +210,6 @@ const playlists = [
         id: 1,
         name: "Bollywood Hits",
         cover: "https://i.scdn.co/image/ab67706f00000002b0fe40a6e1692822f5a9d8f1",
-        songs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+        songs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
     }
 ]; 
