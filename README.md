@@ -1,6 +1,6 @@
-# Spotify Clone
+# APMA Music Player
 
-A modern web-based music player inspired by Spotify, built with HTML, CSS, and JavaScript. This application provides a seamless music listening experience with features like playlists, search functionality, and user authentication.
+A modern web-based music player inspired by Spotify, built with HTML, CSS, and JavaScript. This application provides a seamless music listening experience with a beautiful user interface and essential music player features.
 
 ## Features
 
@@ -11,24 +11,18 @@ A modern web-based music player inspired by Spotify, built with HTML, CSS, and J
 - Current song information display
 - Volume control
 
-### Playlists
-- Create and manage custom playlists
-- Add/remove songs from playlists
-- Pre-made playlists (Sad Songs, Bollywood Hits, Romantic Hits)
-- Playlist cover images and song counts
-
 ### User Interface
 - Responsive design that works on desktop and mobile
 - Modern, Spotify-like dark theme
-- Sidebar navigation
-- Search functionality
-- Mobile-friendly menu
+- Sidebar navigation with collapsible menu
+- Mobile-friendly interface with hamburger menu
+- Beautiful album artwork display
 
-### User Features
-- Google Sign-in integration
-- User-specific playlists
-- Library management
-- Search across songs and playlists
+### Playlists
+- Browse different playlist categories
+- Focus playlists section
+- Spotify playlists section
+- All songs view
 
 ## Setup Instructions
 
@@ -37,30 +31,11 @@ A modern web-based music player inspired by Spotify, built with HTML, CSS, and J
 git clone [repository-url]
 ```
 
-2. Set up Firebase:
-   - Create a Firebase project
-   - Enable Google Authentication
-   - Add your Firebase configuration to the project
-
-3. Configure Firebase:
-   - Replace the Firebase configuration in `script.js` with your own:
-   ```javascript
-   const firebaseConfig = {
-       apiKey: "your-api-key",
-       authDomain: "your-auth-domain",
-       projectId: "your-project-id",
-       storageBucket: "your-storage-bucket",
-       messagingSenderId: "your-messaging-sender-id",
-       appId: "your-app-id",
-       measurementId: "your-measurement-id"
-   };
-   ```
-
-4. Add your music files:
-   - Place your music files in the `songs` directory
+2. Add your music files:
+   - Place your music files in the appropriate directory
    - Update the `songs.js` file with your song information
 
-5. Open the project:
+3. Open the project:
    - Use a local server to run the project
    - Access through your web browser
 
@@ -68,49 +43,37 @@ git clone [repository-url]
 
 ### Playing Music
 - Click on any song to start playing
-- Use the player controls to manage playback
-- Create playlists to organize your music
-- Use the search bar to find specific songs or playlists
+- Use the player controls to manage playback:
+  - Play/Pause
+  - Next/Previous track
+  - Shuffle
+  - Repeat
+- View current song information and progress
 
-### Managing Playlists
-1. Create a new playlist:
-   - Click "Create Playlist" in the sidebar
-   - Enter a name for your playlist
-
-2. Add songs to a playlist:
-   - Go to the playlist
-   - Click "Add Song"
-   - Select songs to add
-
-3. Remove songs from a playlist:
-   - Go to the playlist
-   - Click the remove button on any song
-
-### User Account
-- Sign in with Google to access your playlists
-- Your playlists are saved to your account
-- Access your library from any device
+### Navigation
+- Use the sidebar to navigate between different sections
+- Access Home, Search, and Library
+- Create playlists and view liked songs
+- Browse all songs in your collection
 
 ## Technologies Used
 
 - HTML5
 - CSS3
 - JavaScript (ES6+)
-- Firebase (Authentication & Database)
-- Google Authentication
+- Font Awesome for icons
 
 ## Project Structure
 
 ```
-spotify-clone/
-├── index.html
-├── script.js
-├── songs.js
-├── styles.css
-├── songs/
-│   └── [music files]
-└── imges/
-    └── [cover images]
+spotify/
+├── index.html          # Main HTML file
+├── script.js          # Main JavaScript file
+├── songs.js           # Song data and playlist information
+├── style.css          # Stylesheet
+├── imges/             # Images directory
+│   └── apma.png       # Logo
+└── songs/             # Music files directory
 ```
 
 ## Contributing
@@ -128,5 +91,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - Spotify for the design inspiration
-- Firebase for backend services
+- Font Awesome for the beautiful icons
 - All the artists whose music is featured in the demo 
