@@ -201,6 +201,146 @@ const songs = [
         artist: "Kishore Kumar",
         cover: "imges/sajde.jpg",
         file: "songs/Sajde – Kill Dil.mp3"
+    },
+    {
+        id: 30,
+        title: "Khairiyat",
+        artist: "Pritam",
+        cover: "imges/chhichorre.jpg",
+        file: "songs/07 - Khairiyat (Sad) - Chhichhore (2019).mp3"
+    },
+    {
+        id: 31,
+        title: "Peecha Choote",
+        artist: "RV",
+        cover: "imges/ramaiya vastavaiya.jpg",
+        file: "songs/RV-Peecha Choote.mp3"
+    },
+    {
+        id: 32,
+        title: "Jeene Laga Hoon",
+        artist: "RV",
+        cover: "imges/ramaiya vastavaiya.jpg",
+        file: "songs/RV-Jeene Laga Hoon.mp3"
+    },
+    {
+        id: 33,
+        title: "Challa",
+        artist: "Rahat Fateh Ali Khan",
+        cover: "imges/jab tak hai jaan.jpg",
+        file: "songs/JTHJ 2012 - Challa.mp3"
+    },
+    {
+        id: 34,
+        title: "Hasi",
+        artist: "Arijit Singh",
+        cover: "imges/adhuri.jpg",
+        file: "songs/HAK - Hasi.mp3"
+    },
+    {
+        id: 35,
+        title: "Hamari Adhuri Kahani",
+        artist: "Arijit Singh",
+        cover: "imges/adhuri.jpg",
+        file: "songs/HAK - Hamari Adhuri Kahani.mp3"
+    },
+    {
+        id: 36,
+        title: "Zinda",
+        artist: "Siddharth Mahadevan",
+        cover: "imges/bhaag milkha baag.jpg",
+        file: "songs/BMB 2013 - Zinda.mp3"
+    },
+    {
+        id: 37,
+        title: "Mera Yaar",
+        artist: "Amit Trivedi",
+        cover: "imges/bhaag milkha baag.jpg",
+        file: "songs/BMB 2013 - Mera Yaar.mp3"
+    },
+    {
+        id: 38,
+        title: "Maston Ka Jhund",
+        artist: "Amit Trivedi",
+        cover: "imges/bhaag milkha baag.jpg",
+        file: "songs/BMB 2013 - Maston Ka Jhund.mp3"
+    },
+    {
+        id: 39,
+        title: "O Rangrez",
+        artist: "Amit Trivedi",
+        cover: "imges/bhaag milkha baag.jpg",
+        file: "songs/BMB 2013 - O Rangrez.mp3"
+    },
+    {
+        id: 40,
+        title: "Slow Motion Angreza",
+        artist: "Amit Trivedi",
+        cover: "imges/bhaag milkha baag.jpg",
+        file: "songs/BMB 2013 - Slow Motion Angreza.mp3"
+    },
+    {
+        id: 41,
+        title: "Phir Bhi Tumko Chaahunga",
+        artist: "Arijit Singh",
+        cover: "imges/half girlfriend.jpg",
+        file: "songs/HG 2017 - Phir Bhi Tumko Chaahunga.mp3"
+    },
+    {
+        id: 42,
+        title: "Tune Jo Na Kaha",
+        artist: "Mohit Chauhan",
+        cover: "imges/new york.jpg",
+        file: "songs/New York - Tune Jo Na Kaha.mp3"
+    },
+    {
+        id: 43,
+        title: "Teri Mere Kahaani",
+        artist: "Arijit Singh",
+        cover: "imges/gabbar is back.jpg",
+        file: "songs/GIB - Teri Mere Kahaani.mp3"
+    },
+    {
+        id: 44,
+        title: "Mere Rashke Qamar",
+        artist: "Rahat Fateh Ali Khan",
+        cover: "imges/baadshaho.jpg",
+        file: "songs/Baadshaho 2017 - Mere Rashke Qamar.mp3"
+    },
+    {
+        id: 45,
+        title: "Pani Da Rang",
+        artist: "Ayushmann Khurrana",
+        cover: "imges/vicky donor.jpg",
+        file: "songs/Vicky Donor-Pani Da Rang(Male).mp3"
+    },
+    {
+        id: 46,
+        title: "Mile Ho Tum",
+        artist: "Neha Kakkar",
+        cover: "imges/fever.jpg",
+        file: "songs/Fever 2016 - Mile Ho Tum.mp3"
+    },
+    {
+        id: 47,
+        title: "Mile Ho Tum (Reprise)",
+        artist: "Neha Kakkar",
+        cover: "imges/fever.jpg",
+        file: "songs/Fever 2016 - Mile Ho Tum (Reprise).mp3"
+    },
+    {
+        id: 48,
+        title: "Dil To Bachcha Hai",
+        artist: "Rahat Fateh Ali Khan",
+        cover: "imges/ishqiya.jpg",
+        file: "songs/Ishqiya-Dil To Bachcha Hai.mp3"
+    },
+    {
+        id: 49,
+        title: "Shayad (Reprise)",
+        artist: "Pritam",
+        cover: "imges/love ajj kal.jpg",
+        file: "songs/07 - Shayad (Reprise) - Love Aaj Kal (2020).mp3"
     }
 ];
 
@@ -210,6 +350,6 @@ const playlists = [
         id: 1,
         name: "Bollywood Hits",
         cover: "https://i.scdn.co/image/ab67706f00000002b0fe40a6e1692822f5a9d8f1",
-        songs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+        songs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
     }
 ]; 
