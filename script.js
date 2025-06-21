@@ -154,6 +154,15 @@ function initPlayer() {
             displaySearch();
         });
     }
+
+    // Add event listener for Your Library link
+    const libraryLink = document.querySelector('.navigation a[href="#"] i.fa-book').parentElement;
+    if (libraryLink) {
+        libraryLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            displayLibrary();
+        });
+    }
 }
 
 // Load a song
@@ -530,8 +539,7 @@ function showPlaylistDetail(playlistIndex) {
     });
 }
 
-function displayLibrary() {
-    console.log('Displaying library with playlists:', playlists);
+async function displayLibrary() {
     const mainContent = document.querySelector('.main-content');
     mainContent.innerHTML = `
         <div class="topbar">
@@ -541,51 +549,136 @@ function displayLibrary() {
             </div>
         </div>
         <div class="spotify-playlists">
-            <h2>Your Playlists</h2>
-            <div class="list" id="library-playlists-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;"></div>
+            <h2>Your Library</h2>
+            <div class="list" id="library-playlists-list"></div>
         </div>
     `;
 
     const libraryList = document.getElementById('library-playlists-list');
-    if (playlists.length === 0) {
-        libraryList.innerHTML = '<p style="color:#b3b3b3;text-align:center;grid-column:1/-1;">No playlists yet. Create one to get started!</p>';
-    } else {
-        playlists.forEach((playlist, index) => {
-            const playlistElement = document.createElement('div');
-            playlistElement.className = 'item';
-            playlistElement.style.cssText = `
-                background: #181818;
-                padding: 16px;
-                border-radius: 8px;
-                transition: background-color 0.3s ease;
-                cursor: pointer;
-                position: relative;
-            `;
-            playlistElement.innerHTML = `
-                <img src="${playlist.cover}" alt="${playlist.name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 16px;">
-                <div class="play" style="position: absolute; right: 24px; bottom: 80px; background: #1db954; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
-                    <i class="fa fa-play" style="color: black;"></i>
-                </div>
-                <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">${playlist.name}</h4>
-                <p style="color: #b3b3b3; margin: 0; font-size: 14px;">${playlist.songs ? playlist.songs.length : 0} songs</p>
-            `;
-            
-            playlistElement.addEventListener('mouseenter', () => {
-                playlistElement.style.backgroundColor = '#282828';
-                playlistElement.querySelector('.play').style.opacity = '1';
-            });
-            
-            playlistElement.addEventListener('mouseleave', () => {
-                playlistElement.style.backgroundColor = '#181818';
-                playlistElement.querySelector('.play').style.opacity = '0';
-            });
+    
+    // Show loading state
+    libraryList.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #b3b3b3;">
+            <i class="fa fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
+            <h3>Loading your playlists...</h3>
+        </div>
+    `;
 
-            playlistElement.addEventListener('click', () => {
-                showPlaylistDetail(index);
+    try {
+        console.log("Starting library load...");
+        
+        // Import Firebase functions
+        const { getFirestore, collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+        console.log("Firestore imported successfully");
+        
+        const { getAuth } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js");
+        console.log("Auth imported successfully");
+        
+        const { app } = await import("./auth.js");
+        console.log("Auth app imported successfully");
+        
+        if (!app) {
+            throw new Error("Firebase app not initialized");
+        }
+        
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        console.log("Firebase services initialized");
+        
+        // Check if user is authenticated
+        if (!auth.currentUser) {
+            console.log("No user authenticated, showing sign-in message");
+            libraryList.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #b3b3b3;">
+                    <i class="fa fa-sign-in" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
+                    <h3>Sign in to view your library</h3>
+                    <p>Your playlists will appear here after you sign in.</p>
+                    <button onclick="document.getElementById('sign-in-btn').click()" 
+                            style="background: #1db954; color: #fff; border: none; padding: 12px 24px; border-radius: 25px; margin-top: 15px; cursor: pointer; font-weight: bold;">
+                        Sign In Now
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        console.log("User authenticated:", auth.currentUser.email);
+
+        // Load user's playlists from Firebase
+        const q = query(
+            collection(db, "playlists"),
+            where("createdBy", "==", auth.currentUser.uid)
+        );
+        
+        console.log("Query created, fetching playlists...");
+        const querySnapshot = await getDocs(q);
+        const firebasePlaylists = [];
+        
+        querySnapshot.forEach((doc) => {
+            firebasePlaylists.push({
+                id: doc.id,
+                ...doc.data()
             });
-            
-            libraryList.appendChild(playlistElement);
         });
+
+        console.log("Playlists fetched:", firebasePlaylists.length);
+
+        // Display playlists
+        if (firebasePlaylists.length === 0) {
+            libraryList.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #b3b3b3;">
+                    <i class="fa fa-music" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
+                    <h3>No playlists yet</h3>
+                    <p>Create your first playlist to get started!</p>
+                    <button onclick="document.querySelector('a[href=\"#\"] i.fa-plus-square').parentElement.click()" 
+                            style="background: #1db954; color: #fff; border: none; padding: 12px 24px; border-radius: 25px; margin-top: 15px; cursor: pointer; font-weight: bold;">
+                        Create Playlist
+                    </button>
+                </div>
+            `;
+        } else {
+            libraryList.innerHTML = firebasePlaylists.map(playlist => `
+                <div class="item" data-playlist-id="${playlist.id}" onclick="openPlaylistDetail('${playlist.id}')" style="cursor: pointer;">
+                    <img src="${playlist.songs && playlist.songs.length > 0 ? playlist.songs[0].cover : 'imges/apma.png'}" alt="${playlist.name}">
+                    <div class="play">
+                        <i class="fa fa-play"></i>
+                    </div>
+                    <h4>${playlist.name}</h4>
+                    <p>${playlist.songCount || playlist.songs?.length || 0} songs</p>
+                    <div class="playlist-actions">
+                        <button class="play-playlist" onclick="event.stopPropagation(); playPlaylist('${playlist.id}')">
+                            <i class="fa fa-play"></i> Play
+                        </button>
+                        <button class="delete-playlist" onclick="event.stopPropagation(); deletePlaylist('${playlist.id}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        console.log("Library display completed successfully");
+        
+    } catch (error) {
+        console.error("Error loading library:", error);
+        console.error("Error details:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
+        
+        libraryList.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #b3b3b3;">
+                <i class="fa fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px; display: block; color: #e74c3c;"></i>
+                <h3>Error loading playlists</h3>
+                <p>${error.message}</p>
+                <button onclick="displayLibrary()" 
+                        style="background: #1db954; color: #fff; border: none; padding: 12px 24px; border-radius: 25px; margin-top: 15px; cursor: pointer; font-weight: bold;">
+                    Try Again
+                </button>
+            </div>
+        `;
     }
 }
 
@@ -971,3 +1064,106 @@ window.addEventListener('load', () => {
     initPlayer();
     initMobileFeatures();
 });
+
+// Export functions for use in other modules
+export { displayLibrary };
+
+// Make displayLibrary globally available
+window.displayLibrary = displayLibrary;
+
+// Firebase playlist playback functionality
+let currentPlaylist = null;
+let currentPlaylistSongs = [];
+
+// Function to play a playlist (called from playlists.js)
+window.playPlaylist = async function(playlistId) {
+    try {
+        // Import Firebase functions
+        const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+        const { app } = await import("./auth.js");
+        
+        const db = getFirestore(app);
+        const playlistDoc = await getDoc(doc(db, "playlists", playlistId));
+        
+        if (playlistDoc.exists()) {
+            const playlistData = playlistDoc.data();
+            currentPlaylist = playlistId;
+            currentPlaylistSongs = playlistData.songs;
+            
+            // Set the first song as current
+            if (currentPlaylistSongs.length > 0) {
+                const firstSong = currentPlaylistSongs[0];
+                currentSongIndex = songs.findIndex(s => s.id === firstSong.id);
+                if (currentSongIndex !== -1) {
+                    loadSong(currentSongIndex);
+                    togglePlay();
+                    
+                    // Update UI to show playlist is playing
+                    updatePlayerUI();
+                    console.log(`Now playing playlist: ${playlistData.name}`);
+                }
+            }
+        } else {
+            console.error("Playlist not found");
+        }
+    } catch (error) {
+        console.error("Error playing playlist:", error);
+        alert("Error playing playlist: " + error.message);
+    }
+};
+
+// Override nextSong to work with playlists
+const originalNextSong = nextSong;
+nextSong = function() {
+    if (currentPlaylist && currentPlaylistSongs.length > 0) {
+        // Find current song in playlist
+        const currentSongInPlaylist = songs[currentSongIndex];
+        const currentPlaylistIndex = currentPlaylistSongs.findIndex(s => s.id === currentSongInPlaylist.id);
+        
+        if (currentPlaylistIndex !== -1) {
+            const nextPlaylistIndex = (currentPlaylistIndex + 1) % currentPlaylistSongs.length;
+            const nextSongInPlaylist = currentPlaylistSongs[nextPlaylistIndex];
+            const nextSongIndex = songs.findIndex(s => s.id === nextSongInPlaylist.id);
+            
+            if (nextSongIndex !== -1) {
+                currentSongIndex = nextSongIndex;
+                loadSong(currentSongIndex);
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+                return;
+            }
+        }
+    }
+    
+    // Fall back to original behavior
+    originalNextSong();
+};
+
+// Override prevSong to work with playlists
+const originalPrevSong = prevSong;
+prevSong = function() {
+    if (currentPlaylist && currentPlaylistSongs.length > 0) {
+        // Find current song in playlist
+        const currentSongInPlaylist = songs[currentSongIndex];
+        const currentPlaylistIndex = currentPlaylistSongs.findIndex(s => s.id === currentSongInPlaylist.id);
+        
+        if (currentPlaylistIndex !== -1) {
+            const prevPlaylistIndex = currentPlaylistIndex === 0 ? currentPlaylistSongs.length - 1 : currentPlaylistIndex - 1;
+            const prevSongInPlaylist = currentPlaylistSongs[prevPlaylistIndex];
+            const prevSongIndex = songs.findIndex(s => s.id === prevSongInPlaylist.id);
+            
+            if (prevSongIndex !== -1) {
+                currentSongIndex = prevSongIndex;
+                loadSong(currentSongIndex);
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+                return;
+            }
+        }
+    }
+    
+    // Fall back to original behavior
+    originalPrevSong();
+};

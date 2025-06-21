@@ -68,6 +68,18 @@
                     </li>
                 </ul>
             </div>
+            <div id="user-info"
+                style="display: none; margin-bottom: 20px; padding: 15px; background: #282828; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div id="user-avatar"
+                        style="width: 50px; height: 50px; border-radius: 50%; background: #1db954; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #000; font-weight: bold;">
+                    </div>
+                    <div id="user-name" style="color: #fff; font-weight: bold; margin-bottom: 5px;"></div>
+                    <div id="user-email" style="color: #b3b3b3; font-size: 12px;"></div>
+                </div>
+            </div>
+            <button id="sign-in-btn">Sign in with Google</button>
+            <button id="sign-out-btn" style="display: none; margin-top: 10px;">Sign Out</button>
         </div>
 
         <!-- Main Content -->
@@ -90,6 +102,89 @@
                 <h2>Focus</h2>
                 <div class="list">
                     <!-- Focus playlist items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Playlist Creation Modal -->
+        <div id="playlist-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Create New Playlist</h2>
+                <form id="playlist-form">
+                    <div class="form-group">
+                        <label for="playlist-name">Playlist Name:</label>
+                        <input type="text" id="playlist-name" name="playlist-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="playlist-description">Description (optional):</label>
+                        <textarea id="playlist-description" name="playlist-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Songs:</label>
+                        <div id="song-selection" class="song-selection">
+                            <!-- Songs will be populated here -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Selected Songs (<span id="selected-count">0</span>):</label>
+                        <div id="selected-songs-preview" class="selected-songs-preview">
+                            <!-- Selected songs will be shown here -->
+                        </div>
+                    </div>
+                    <button type="submit" id="create-playlist-btn">Create Playlist</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Playlist Detail Modal -->
+        <div id="playlist-detail-modal" class="modal">
+            <div class="modal-content playlist-detail-content">
+                <span class="close" id="playlist-detail-close">&times;</span>
+                <div class="playlist-detail-header">
+                    <div class="playlist-info">
+                        <img id="playlist-detail-cover" src="" alt="Playlist Cover">
+                        <div class="playlist-detail-text">
+                            <h2 id="playlist-detail-name">Playlist Name</h2>
+                            <p id="playlist-detail-description">Description</p>
+                            <p id="playlist-detail-stats">0 songs</p>
+                        </div>
+                    </div>
+                    <div class="playlist-detail-actions">
+                        <button id="play-playlist-btn" class="play-btn">
+                            <i class="fa fa-play"></i> Play
+                        </button>
+                        <button id="add-songs-btn" class="add-songs-btn">
+                            <i class="fa fa-plus"></i> Add Songs
+                        </button>
+                    </div>
+                </div>
+
+                <div class="playlist-songs-section">
+                    <h3>Songs in this playlist</h3>
+                    <div id="playlist-songs-list" class="playlist-songs-list">
+                        <!-- Songs will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Add Songs Modal (nested) -->
+                <div id="add-songs-modal" class="nested-modal">
+                    <div class="nested-modal-content">
+                        <div class="nested-modal-header">
+                            <h3>Add Songs to Playlist</h3>
+                            <span class="close" id="add-songs-close">&times;</span>
+                        </div>
+                        <div class="add-songs-search">
+                            <input type="text" id="add-songs-search" placeholder="Search songs...">
+                        </div>
+                        <div id="add-songs-selection" class="add-songs-selection">
+                            <!-- Available songs will be populated here -->
+                        </div>
+                        <div class="add-songs-actions">
+                            <button id="add-selected-songs-btn" disabled>Add Selected Songs</button>
+                            <button id="cancel-add-songs-btn">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,8 +216,16 @@
             </div>
         </div>
     </div>
+    <script src="auth.js" type="module"></script>
+    <script src="playlists.js" type="module"></script>
+    <script src="playlist-detail.js" type="module"></script>
     <script src="songs.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const googleBtn = document.getElementById("sign-in-btn");
+        });
+    </script>
 </body>
 
 </html>
